@@ -13,17 +13,6 @@ This project builds a semantic layer on top of that data:
 - **Cross-year continuity** — provenance and entity-resolution predicates support comparing 2023 and 2024 inventories at the use case level.
 - **Extensibility** — the BFO/CCO-aligned ontology and SKOS taxonomy are designed to absorb new inventory years, new goal categories, and new analytical questions without structural changes to existing data.
 
-## Repository structure
-
-```
-metagraph_aiu/
-└── 1_Ontology/          OWL ontology, SHACL shapes, business goal taxonomy,
-                         field mapping, and design documentation
-                         → see 1_Ontology/README.md for full details
-```
-
-Additional folders will be added as the project progresses (ETL pipeline, graph database exports, analytics notebooks).
-
 ## Status
 
 | Component | Status |
@@ -32,8 +21,7 @@ Additional folders will be added as the project progresses (ETL pipeline, graph 
 | SHACL shapes (`aiu_shapes.ttl`) | Draft v1 |
 | Business goal taxonomy (39 sub-goals) | Draft v1 |
 | ETL pilot (15-record proof of concept) | Complete |
-| Full 2,133-record ETL run | Pending |
-| 2023 inventory ingest | Pending |
+| Full 2023 and 2024 ETL run | Pending |
 | Property graph database load | Pending |
 | Entity resolution (cross-year) | Pending |
 
