@@ -4,6 +4,8 @@ This folder contains the extraction, transformation, and loading (ETL) pipeline 
 
 Ontology and shapes files live in [`../1_Ontology/`](../1_Ontology/README.md). This folder contains only pipeline code and its outputs.
 
+Examples use Anthropic LLM and you can substitute with any LLM API of your choice. We do not endorse prefer one LLM over others. 
+
 ---
 
 ## Pipeline Overview
@@ -15,18 +17,7 @@ Three scripts work in sequence. Run them in this order when setting up or after 
 2. aiu_analytics_check.py  ← verify graph structure supports planned analytics
 3. etl_pilot.py            ← run the ETL; produces RDF output + SHACL report
 ```
-
-### What each script does
-
-| Script | Role | Runtime |
-|---|---|---|
-| `aiu_validation.py` | 5-point consistency check: SKOS enum completeness, SPARQL prefix wiring, PROV alignment, BFO TimeInstant modeling, gate-logic unit tests on synthetic graphs | 10–30 s |
-| `aiu_analytics_check.py` | 4-scenario analytics readiness check: multi-goal cardinality, high-impact dimensions, cross-year continuity chains, combined scenarios | 15–45 s |
-| `etl_pilot.py` | 6-step ETL: load ontology/shapes/taxonomy → select 15 representative rows → CSV→RDF → LLM business-goal tagging → SHACL validation → summary report | 60–90 s |
-
----
-
-## Data Flow
+Data flow:
 
 ```
 ../1_Ontology/
@@ -77,11 +68,9 @@ Greedy agency+topic diversity: no two consecutive selections share the same `age
 
 ### Business Goal Tagging
 
-Each use case is classified against the 39-sub-goal business goal taxonomy using Claude Haiku (`claude-haiku-4-5-20251001`). The prompt supplies the use case name, purpose/benefits text, AI outputs, topic area, and development stage alongside the full goal catalog. The model returns JSON `{"goals": ["aiu:BG_X_Y", ...]}`. Returned IDs are whitelist-filtered against the ontology's `GOAL_ID_SET` and capped at 5 per record, preventing hallucinated IRIs.
+Each use case is classified against the 39-sub-goal business goal taxonomy using LLM. The prompt supplies the use case name, purpose/benefits text, AI outputs, topic area, and development stage alongside the full goal catalog. The model returns JSON `{"goals": ["aiu:BG_X_Y", ...]}`. Returned IDs are whitelist-filtered against the ontology's `GOAL_ID_SET` and capped at 5 per record, preventing hallucinated IRIs.
 
-The LLM approach is necessary because the taxonomy uses business-management vocabulary ("process efficiency", "regulatory compliance") while agencies write in government/technical language ("radiation portal monitors", "anomaly detection at land border ports"). TF-IDF cosine similarity achieved only 40% coverage due to this vocabulary gap; the LLM achieves 100%.
-
-Production cost estimate: 2,133 rows × ~1,200 tokens/call ≈ 2.6M tokens → ~$0.35 at Haiku pricing.
+The LLM approach is necessary because the taxonomy uses business-management vocabulary ("process efficiency", "regulatory compliance") while agencies may write in government/technical language ("radiation portal monitors", "anomaly detection at land border ports").
 
 ---
 
@@ -176,7 +165,7 @@ Test B's single violation and Test D's 17 violations are **expected and correct*
 
 ---
 
-## Scaling to the Full 2,133-Row Inventory
+## Scaling to the Full 2,133-Row or more Inventory
 
 The pilot validates the complete pipeline on a representative sample. To run at full scale:
 
