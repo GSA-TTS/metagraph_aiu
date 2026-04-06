@@ -6,9 +6,7 @@
 
 ## 1. Background and Motivation
 
-The U.S. Office of Management and Budget (OMB) publishes an annual **Federal AI Use Case Inventory**, collecting submissions from all covered federal agencies. The 2023 and 2024 consolidated inventories contain approximately 2,133 use case records across 67 data fields spanning sections such as identifiers, use case summary, data and code, enablement and infrastructure, and risk management.
-
-The Federal AI Use Case Inventory is valuable as a compliance artifact but limited as an analytical resource. Its fields are predominantly free text or categorical strings. There is no shared vocabulary for what agencies are trying to accomplish, no graph structure connecting use cases to each other, and no mechanism for cross-year comparison at the semantic level.
+The U.S. Office of Management and Budget (OMB) publishes an annual **Federal AI Use Case Inventory**, collecting submissions from all covered federal agencies. The 2023 and 2024 consolidated inventories contain approximately 2,133 use case records. The inventory is valuable as a compliance artifact but limited as an analytical resource. Its fields are predominantly free text or categorical strings. There is no shared vocabulary for what agencies are trying to accomplish, no graph structure connecting use cases to each other, and no mechanism for cross-year comparison at the semantic level.
 
 This folder contains a **formal semantic layer** built to close those gaps. Its central purpose is to understand the **business aspects** of submitted AI use cases — what goals agencies are actually pursuing, which mission domains concentrate the most AI activity, and how risk and governance postures vary across goal types — while providing a foundation that can extend to new inventory years, new goal categories, and new analytical questions without structural disruption.
 
@@ -18,12 +16,12 @@ This folder contains a **formal semantic layer** built to close those gaps. Its 
 The semantic layer consists of three coordinated files:
 
 ```
+taxonomy_bizGoals.md    ←  Human-readable taxonomy specification: 10 goal clusters,
+                            39 sub-goals, NLP classification hints per cluster
 aiu_ontology_ver1.ttl   ←  OWL ontology: all classes, properties, SKOS concept schemes,
                             and business goal taxonomy individuals
 aiu_shapes.ttl          ←  SHACL shapes: data validation with conditional gate logic
                             (imports the ontology)
-taxonomy_bizGoals.md    ←  Human-readable taxonomy specification: 10 goal clusters,
-                            39 sub-goals, NLP classification hints per cluster
 ```
 
 Supporting documents in this directory:
@@ -91,11 +89,9 @@ Business goals are the primary mechanism for extracting structured, graph-querya
 The pipeline works as follows:
 
 1. **Source text:** `11_purpose_benefits` (primary) and `12_outputs` (secondary) are free-text fields submitted by agencies. They describe what the use case is for and what the AI system produces.
-2. **Classification:** A Claude Haiku LLM call assigns 0–5 `aiu:BG_*` goal IRIs per use case, guided by the full 39-goal catalog and agency context (topic area, development stage). The model bridges government/technical language to taxonomy labels without requiring shared tokens.
+2. **Classification:** A LLM call assigns 0–5 `aiu:BG_*` goal IRIs per use case, guided by the full 39-goal catalog and agency context (topic area, development stage). The model bridges government/technical language to taxonomy labels without requiring shared tokens.
 3. **Graph edges:** Each assignment becomes an `aiu:hasBusinessGoal` triple on the `AIUseCasePlan` node — a typed, traversable edge in the knowledge graph.
 4. **Analytics:** These edges enable goal frequency counts, goal–goal co-occurrence networks, bipartite projections, community detection, and cross-year trend comparisons — none of which are possible from the raw CSV.
-
-This approach achieved 100% classification coverage on the 15-record pilot (vs. 40% with TF-IDF cosine similarity), at an estimated production cost of ~$0.35 for all 2,133 records.
 
 ### 3.3 Business Goal Taxonomy
 
@@ -191,7 +187,7 @@ A five-test synthetic validation suite (`aiu_validation.py`) verifies gate logic
 
 The ontology is structured to support a range of graph-analytic questions without additional preprocessing:
 
-| Analytic | Graph pattern |
+| Sample Analytic Questions | Graph pattern |
 |---|---|
 | Goal frequency per year | `AIUseCasePlan ──hasBusinessGoal──► BG_* ◄──partOfInventory── InventorySnapshot` |
 | Goal co-occurrence | Project bipartite (Plan ↔ Goal) onto goal–goal edges |
@@ -201,8 +197,6 @@ The ontology is structured to support a range of graph-analytic questions withou
 | Duplication candidates | `aiu:possibleDuplicateOf` edges (symmetric; populated by entity resolution) |
 | Cross-year continuity | `aiu:continuesFrom` edges (directed; 2024 → 2023 predecessor) |
 | Temporal lifecycle | `hasInitiationTime`, `hasAcqDevTime`, `hasImplementationTime` per `InventorySnapshot` |
-
-To load into a property graph database, use **Neosemantics (n10s)** for on-premises Neo4j or **rdflib-neo4j** for managed deployments. Both map OWL classes to node labels and object property assertions to typed relationships.
 
 ---
 
@@ -298,7 +292,7 @@ print(results_text)
 
 ## 8. Known Gaps and Roadmap
 
-The ontology and ETL pipeline are at a validated pilot stage (15-record proof of concept). The following gaps are known and tracked, organized by type and priority.
+The ontology and ETL pipeline are at a validated pilot stage. The following gaps are known and tracked, organized by type and priority.
 
 ### 8.1 Unmapped Inventory Fields
 
@@ -329,7 +323,7 @@ The ontology and ETL pipeline are at a validated pilot stage (15-record proof of
 
 **Full-scale run not yet executed.** The ETL has been validated on a 15-record pilot (413 triples, 18 SHACL violations all confirmed as genuine data gaps). The full 2,133-record run and the complete SHACL validation pass are pending. Recommended approach: batch in chunks of ~200 rows, accumulate into one graph, validate once with pySHACL.
 
-**2023 inventory not yet ingested.** The `InventorySnapshot` pattern and the `aiu:continuesFrom` / `aiu:possibleDuplicateOf` predicates are defined in the ontology, but only the 2024 inventory has been processed. Cross-year trend analysis requires both years loaded into the same graph or into year-labeled named graphs.
+**2025 inventory not yet ingested.** Cross-year trend analysis requires at least 2 reporting years to be loaded into the same graph or into year-labeled named graphs.
 
 **PROV-O fields not yet populated.** The OWL restrictions on `UseCaseRecord` require `prov:wasAttributedTo` (linking to `aiu:Agency`) and `prov:generatedAtTime` (inventory snapshot timestamp). These are currently declared as `sh:Warning` in SHACL (not violations) because they depend on a provenance enrichment pass that has not yet been run. Once populated, the corresponding shapes should be promoted to `sh:Violation` severity.
 
