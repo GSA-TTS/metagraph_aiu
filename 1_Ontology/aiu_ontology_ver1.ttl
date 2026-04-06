@@ -1,0 +1,1320 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+@prefix bfo:  <http://purl.obolibrary.org/obo/BFO_> .
+@prefix ro:   <http://purl.obolibrary.org/obo/RO_> .
+@prefix iao:  <http://purl.obolibrary.org/obo/IAO_> .
+@prefix cco:  <https://www.commoncoreontologies.org/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+@prefix aiu:  <https://example.org/ai-usecase-ontology#> .
+
+#################################################################
+# Ontology header
+# Fix O-1: CCO import IRI updated to v2.0
+# Fix O-5: BFO import IRI updated to BFO 2020 versioned IRI
+#################################################################
+
+aiu:
+    a owl:Ontology ;
+    rdfs:label "AI Use Case Ontology (BFO-aligned)" ;
+    rdfs:comment "Ontology for modeling U.S. Federal AI use cases, goals, risks, and governance, aligned with BFO 2020, RO, IAO, and CCO v2.0." ;
+    owl:versionInfo "2.0" ;
+    owl:imports
+        <http://purl.obolibrary.org/obo/bfo/2020/bfo-core.owl> ,
+        <http://purl.obolibrary.org/obo/ro.owl> ,
+        <http://purl.obolibrary.org/obo/iao.owl> ,
+        <https://www.commoncoreontologies.org/AllCoreOntology> ,
+        <http://www.w3.org/ns/prov-o#> ,
+        <http://www.w3.org/2004/02/skos/core> .
+
+# CCO v2.0 class IRIs referenced:
+#   Planned Act (IntentionalAct)          cco:ont00000228
+#   Directive Information Content Entity  cco:ont00000965
+#   Objective                             cco:ont00000476
+#   Organization                          cco:ont00001180
+#   Artifact                              cco:ont00000995
+#   InformationContentEntity              cco:ont00000958
+
+
+#################################################################
+# A. Core classes — use case record, plan, process
+#################################################################
+
+### Use case record (one inventory row = one information artifact)
+
+aiu:UseCaseRecord a owl:Class ;
+    rdfs:label "Use case record" ;
+    rdfs:subClassOf iao:0000310 ,     # IAO: document
+                    prov:Entity ,     # Fix O-14: PROV-O integration
+                    [ a owl:Restriction ;
+                      owl:onProperty prov:wasAttributedTo ;
+                      owl:someValuesFrom aiu:Agency ] ,
+                    [ a owl:Restriction ;
+                      owl:onProperty prov:generatedAtTime ;
+                      owl:someValuesFrom xsd:dateTime ] ;
+    rdfs:comment "An information artifact corresponding to a single row in the OMB Federal AI Use Case Inventory for a given year. Each record is attributed to the reporting Agency (prov:wasAttributedTo) and timestamped to the inventory reporting year (prov:generatedAtTime)." .
+
+### AI use case plan (prescriptive specification of intent)
+
+aiu:AIUseCasePlan a owl:Class ;
+    rdfs:label "AI use case plan" ;
+    rdfs:subClassOf iao:0000104 ,                # IAO: plan specification
+                    cco:ont00000965 ;            # Fix O-3: CCO Directive ICE, v2.0 IRI
+    rdfs:comment "A plan specification that prescribes the intended AI-enabled process for a use case, including objectives, scope, and context." .
+
+### AI use case process (the real-world deployed process)
+
+aiu:AIUseCaseProcess a owl:Class ;
+    rdfs:label "AI use case process" ;
+    rdfs:subClassOf cco:ont00000228 ;  # Fix O-2: CCO Planned Act (IntentionalAct), v2.0 IRI
+    rdfs:comment "A planned act in which an AI system is deployed and operated to achieve one or more business goals within an agency context." .
+
+### Inventory snapshot (the annual inventory as a named entity)
+# Fix O-9: new class for cross-year analysis and named graph anchoring
+
+aiu:InventorySnapshot a owl:Class ;
+    rdfs:label "Inventory snapshot" ;
+    rdfs:subClassOf iao:0000310 ;      # IAO: document
+    rdfs:comment "An information artifact representing the complete Federal AI Use Case Inventory for a specific reporting year (e.g., 2023, 2024). Used to anchor use case records to a named graph and support cross-year provenance." .
+
+
+#################################################################
+# B. Business goal OWL class
+# Fix O-4: separated from skos:Concept; SKOS concepts are NamedIndividuals (section C)
+#################################################################
+
+aiu:BusinessGoalConcept a owl:Class ;
+    rdfs:label "Business goal concept" ;
+    rdfs:subClassOf cco:ont00000476 ;  # Fix O-4: CCO Objective, v2.0 IRI
+    rdfs:comment "An objective that prescribes a projected state an agency intends to achieve through an AI use case. Individuals of this class are also declared as owl:NamedIndividual skos:Concept members of aiu:BusinessGoalTaxonomy." .
+
+
+#################################################################
+# C. Business goal SKOS taxonomy
+# Fix O-4, O-8: ConceptScheme and Concept instances as owl:NamedIndividual
+# altLabels (keyword cues for NLP classification) should be derived
+# from the lookup-fields in taxonomy_bizGoals.md and added here.
+#################################################################
+
+aiu:BusinessGoalTaxonomy a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "Federal AI Use Case Business Goal Taxonomy"@en ;
+    skos:definition "A controlled vocabulary of business goals organized into 10 clusters with ~40 sub-goals, used to classify U.S. Federal AI use cases."@en ;
+    dct:creator "MetaGraph project" .
+
+### Cluster 1: Strategic and Business Model Goals
+
+aiu:BG_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Strategic and Business Model Goals"@en ;
+    skos:definition "Goals related to mission direction, strategic fit, business model design, and scaling strategy under uncertainty."@en ;
+    skos:topConceptOf aiu:BusinessGoalTaxonomy ;
+    skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_1_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Direction, ambition, and coherence"@en ;
+    skos:definition "Define a clear, credible mission and align purpose, strategy, and goals across the organization."@en ;
+    skos:broader aiu:BG_1 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_1_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Strategic fit, market choices, and portfolio moves"@en ;
+    skos:definition "Enter and expand in domains where the agency has strong strategic and capability fit; manage portfolio allocation."@en ;
+    skos:broader aiu:BG_1 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_1_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Business model design and economics"@en ;
+    skos:definition "Design viable value propositions, sustainable cost structures, and aligned revenue or funding models."@en ;
+    skos:broader aiu:BG_1 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_1_4 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Strategic planning and scaling under uncertainty"@en ;
+    skos:definition "Build plans that incorporate uncertainty and real options; scale initiatives at a pace matching organizational capability."@en ;
+    skos:broader aiu:BG_1 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+### Cluster 2: Market, Customer, and Revenue Goals
+
+aiu:BG_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Market, Customer, and Revenue Goals"@en ;
+    skos:definition "Goals related to brand positioning, market understanding, customer acquisition, and customer experience."@en ;
+    skos:topConceptOf aiu:BusinessGoalTaxonomy ;
+    skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_2_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Brand positioning, identity, and value communication"@en ;
+    skos:definition "Articulate a distinctive brand positioning and communicate value to defined target audiences."@en ;
+    skos:broader aiu:BG_2 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_2_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Market understanding, demand estimation, and segmentation"@en ;
+    skos:definition "Define markets realistically based on behavior; develop evidence-based segmentation and demand forecasting."@en ;
+    skos:broader aiu:BG_2 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_2_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Customer acquisition, conversion, and go-to-market"@en ;
+    skos:definition "Clarify ideal beneficiary profiles; design outreach channels; improve enrollment and conversion."@en ;
+    skos:broader aiu:BG_2 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_2_4 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Customer experience, satisfaction, and retention"@en ;
+    skos:definition "Deliver low-friction, reliable service journeys; build responsive support; personalize using customer data."@en ;
+    skos:broader aiu:BG_2 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+### Cluster 3: Product, Service, and Innovation Goals
+
+aiu:BG_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Product, Service, and Innovation Goals"@en ;
+    skos:definition "Goals related to product-market fit, quality, innovation pace, and portfolio lifecycle management."@en ;
+    skos:topConceptOf aiu:BusinessGoalTaxonomy ;
+    skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_3_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Product-market fit and offer configuration"@en ;
+    skos:definition "Validate demand and problem-solution fit with evidence before scaling; align pricing with value perception."@en ;
+    skos:broader aiu:BG_3 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_3_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Quality, reliability, and consistency"@en ;
+    skos:definition "Ensure products and services reliably perform as intended and deliver consistent experiences across channels."@en ;
+    skos:broader aiu:BG_3 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_3_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Innovation pace and responsiveness"@en ;
+    skos:definition "Maintain innovation cycles that keep pace with technology, competitors, and mission needs; invest in R&D."@en ;
+    skos:broader aiu:BG_3 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_3_4 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Product portfolio and lifecycle management"@en ;
+    skos:definition "Actively manage the portfolio including timely retirement of legacy programs; allocate resources by strategic fit."@en ;
+    skos:broader aiu:BG_3 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+### Cluster 4: Operational and Process Goals
+
+aiu:BG_4 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Operational and Process Goals"@en ;
+    skos:definition "Goals related to process efficiency, supply chain, internal controls, and scaling operations."@en ;
+    skos:topConceptOf aiu:BusinessGoalTaxonomy ;
+    skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_4_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Process efficiency and waste reduction"@en ;
+    skos:definition "Minimize waste, relieve bottlenecks, standardize work, and improve process visibility and throughput."@en ;
+    skos:broader aiu:BG_4 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_4_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Supply chain, logistics, inventory, and fulfillment"@en ;
+    skos:definition "Strengthen upstream operations, improve logistics reliability, and optimize inventory levels."@en ;
+    skos:broader aiu:BG_4 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_4_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Internal controls, procedures, and performance management"@en ;
+    skos:definition "Establish robust internal controls and feedback loops to continuously improve compliant operations."@en ;
+    skos:broader aiu:BG_4 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_4_4 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Scaling operations without degrading quality or CX"@en ;
+    skos:definition "Scale volumes and complexity while maintaining quality and customer experience."@en ;
+    skos:broader aiu:BG_4 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+### Cluster 5: Financial Structure and Performance Goals
+
+aiu:BG_5 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Financial Structure and Performance Goals"@en ;
+    skos:definition "Goals related to revenue stability, cost structure, profitability, and financial risk management."@en ;
+    skos:topConceptOf aiu:BusinessGoalTaxonomy ;
+    skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_5_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Revenue stability, cash flow, and liquidity"@en ;
+    skos:definition "Reduce revenue volatility; improve cash-flow forecasting and maintain adequate buffers."@en ;
+    skos:broader aiu:BG_5 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_5_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Cost structure and inflation resilience"@en ;
+    skos:definition "Optimize fixed vs. variable costs; enhance cost visibility; absorb inflation and input-cost shocks."@en ;
+    skos:broader aiu:BG_5 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_5_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Profitability, ROI, and capital allocation"@en ;
+    skos:definition "Strengthen margins; allocate capital to projects with superior risk-adjusted returns; conduct post-investment reviews."@en ;
+    skos:broader aiu:BG_5 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_5_4 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Leverage, market risk, and financial risk management"@en ;
+    skos:definition "Maintain leverage at resilient levels; manage interest-rate and market risks proactively."@en ;
+    skos:broader aiu:BG_5 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+### Cluster 6: Human Capital, Culture, and Organizational Goals
+
+aiu:BG_6 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Human Capital, Culture, and Organizational Goals"@en ;
+    skos:definition "Goals related to talent strategy, engagement, retention, and organizational design."@en ;
+    skos:topConceptOf aiu:BusinessGoalTaxonomy ;
+    skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_6_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Talent, skills, and workforce strategy"@en ;
+    skos:definition "Align workforce skills and roles with strategic needs; invest in upskilling, reskilling, and internal mobility."@en ;
+    skos:broader aiu:BG_6 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_6_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Engagement, culture, and incentives"@en ;
+    skos:definition "Increase employee engagement; build healthy inclusive cultures; align incentives with long-term value."@en ;
+    skos:broader aiu:BG_6 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_6_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Retention, burnout, and leadership pipelines"@en ;
+    skos:definition "Reduce avoidable turnover; prevent burnout; build robust leadership pipelines and succession plans."@en ;
+    skos:broader aiu:BG_6 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_6_4 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Organizational design and decision rights"@en ;
+    skos:definition "Align structure with strategy; clarify roles and handoffs; design clear decision rights and governance."@en ;
+    skos:broader aiu:BG_6 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+### Cluster 7: Governance, Legal, and Compliance Goals
+
+aiu:BG_7 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Governance, Legal, and Compliance Goals"@en ;
+    skos:definition "Goals related to regulatory compliance, governance structures, contract management, and ethics."@en ;
+    skos:topConceptOf aiu:BusinessGoalTaxonomy ;
+    skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_7_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Regulatory and legal compliance"@en ;
+    skos:definition "Achieve and maintain compliance with applicable regulations; minimize exposure to fines and sanctions."@en ;
+    skos:broader aiu:BG_7 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_7_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Governance structures and board effectiveness"@en ;
+    skos:definition "Ensure oversight bodies effectively oversee risk, safety, culture, and ethics."@en ;
+    skos:broader aiu:BG_7 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_7_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Contract management and intellectual-property stewardship"@en ;
+    skos:definition "Improve contract lifecycle management; protect and enforce intellectual property rights."@en ;
+    skos:broader aiu:BG_7 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_7_4 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Ethics, fraud, and whistleblowing"@en ;
+    skos:definition "Build effective ethics programs; strengthen anti-fraud controls; provide trusted whistleblower channels."@en ;
+    skos:broader aiu:BG_7 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+### Cluster 8: Technology, Data, and Cybersecurity Goals
+
+aiu:BG_8 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Technology, Data, and Cybersecurity Goals"@en ;
+    skos:definition "Goals related to technology-data alignment, cybersecurity, and AI/automation enablement."@en ;
+    skos:topConceptOf aiu:BusinessGoalTaxonomy ;
+    skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_8_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Technology and data alignment"@en ;
+    skos:definition "Align technology and data strategy with mission priorities; modernize legacy systems; ensure data quality."@en ;
+    skos:broader aiu:BG_8 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_8_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Cybersecurity and protection"@en ;
+    skos:definition "Strengthen cybersecurity to protect assets, data, and operations; detect and respond quickly to threats."@en ;
+    skos:broader aiu:BG_8 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_8_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Automation and AI enablement"@en ;
+    skos:definition "Leverage automation and AI to enhance productivity, augment analysts, and manage associated risks."@en ;
+    skos:broader aiu:BG_8 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+### Cluster 9: External Environment and Macroeconomic Goals
+
+aiu:BG_9 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "External Environment and Macroeconomic Goals"@en ;
+    skos:definition "Goals related to macroeconomic resilience, regulatory adaptability, and disaster or geopolitical risk."@en ;
+    skos:topConceptOf aiu:BusinessGoalTaxonomy ;
+    skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_9_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Macroeconomic resilience"@en ;
+    skos:definition "Build financial and operational resilience to downturns, inflation, and capital-access risks."@en ;
+    skos:broader aiu:BG_9 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_9_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Regulatory and policy adaptability"@en ;
+    skos:definition "Anticipate and adapt to tax, trade, and regulatory changes; protect access to contracts amid policy shifts."@en ;
+    skos:broader aiu:BG_9 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_9_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Resilience to geopolitical, pandemic, and disaster shocks"@en ;
+    skos:definition "Increase resilience to geopolitical conflict, pandemics, natural disasters, and energy supply shocks."@en ;
+    skos:broader aiu:BG_9 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_9_4 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Labor, demographic, and social shifts"@en ;
+    skos:definition "Adapt workforce strategies to demographic changes; reduce barriers to workforce participation."@en ;
+    skos:broader aiu:BG_9 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+### Cluster 10: Reputation, Brand, and Stakeholder Trust Goals
+
+aiu:BG_10 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Reputation, Brand, and Stakeholder Trust Goals"@en ;
+    skos:definition "Goals related to product safety, ethical conduct, crisis readiness, and stakeholder alignment."@en ;
+    skos:topConceptOf aiu:BusinessGoalTaxonomy ;
+    skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_10_1 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Product safety, data protection, and incident prevention"@en ;
+    skos:definition "Deliver safe products; protect personal data; prevent safety and environmental incidents."@en ;
+    skos:broader aiu:BG_10 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_10_2 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Ethical conduct, compliance, and leadership integrity"@en ;
+    skos:definition "Uphold high ethical standards; avoid fraud and misconduct; ensure leaders embody stated values."@en ;
+    skos:broader aiu:BG_10 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_10_3 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Crisis readiness and communications"@en ;
+    skos:definition "Respond quickly, transparently, and empathetically to crises; coordinate communications to avoid confusion."@en ;
+    skos:broader aiu:BG_10 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+aiu:BG_10_4 a skos:Concept, owl:NamedIndividual, aiu:BusinessGoalConcept ;
+    skos:prefLabel "Alignment with stakeholder expectations and social impact"@en ;
+    skos:definition "Align actions with sustainability, diversity, and social responsibility commitments; demonstrate say-do consistency."@en ;
+    skos:broader aiu:BG_10 ; skos:inScheme aiu:BusinessGoalTaxonomy .
+
+
+#################################################################
+# D. SKOS ConceptSchemes for enumerated inventory fields
+# Fix O-7, O-10, O-11, O-12, O-13, O-17–O-22
+# Enumerated values from data_dictionary.yaml
+#################################################################
+
+### Topic Area (8_topic_area) — 10 enumerated values
+# Fix O-7
+
+aiu:TopicAreaScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "Federal AI Use Case Topic Area Vocabulary"@en ;
+    dct:source "OMB Federal AI Use Case Inventory data_dictionary.yaml field 8_topic_area" .
+
+aiu:TA_GovServices a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Government Services (includes Benefits and Service Delivery)"@en ;
+    skos:topConceptOf aiu:TopicAreaScheme ; skos:inScheme aiu:TopicAreaScheme .
+
+aiu:TA_DiplomacyTrade a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Diplomacy and Trade"@en ;
+    skos:topConceptOf aiu:TopicAreaScheme ; skos:inScheme aiu:TopicAreaScheme .
+
+aiu:TA_EducationWorkforce a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Education and Workforce"@en ;
+    skos:topConceptOf aiu:TopicAreaScheme ; skos:inScheme aiu:TopicAreaScheme .
+
+aiu:TA_EnergyEnvironment a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Energy and the Environment"@en ;
+    skos:topConceptOf aiu:TopicAreaScheme ; skos:inScheme aiu:TopicAreaScheme .
+
+aiu:TA_EmergencyMgmt a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Emergency Management"@en ;
+    skos:topConceptOf aiu:TopicAreaScheme ; skos:inScheme aiu:TopicAreaScheme .
+
+aiu:TA_HealthMedical a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Health and Medical"@en ;
+    skos:topConceptOf aiu:TopicAreaScheme ; skos:inScheme aiu:TopicAreaScheme .
+
+aiu:TA_LawJustice a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Law and Justice"@en ;
+    skos:topConceptOf aiu:TopicAreaScheme ; skos:inScheme aiu:TopicAreaScheme .
+
+aiu:TA_ScienceSpace a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Science and Space"@en ;
+    skos:topConceptOf aiu:TopicAreaScheme ; skos:inScheme aiu:TopicAreaScheme .
+
+aiu:TA_Transportation a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Transportation"@en ;
+    skos:topConceptOf aiu:TopicAreaScheme ; skos:inScheme aiu:TopicAreaScheme .
+
+aiu:TA_MissionEnabling a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Mission-Enabling"@en ;
+    skos:topConceptOf aiu:TopicAreaScheme ; skos:inScheme aiu:TopicAreaScheme .
+
+
+### Development Stage (16_dev_stage) — 5 enumerated values
+# Fix O-10
+
+aiu:DevStageScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "AI Use Case Development Stage Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 16_dev_stage (NIST SDLC stages)" .
+
+aiu:DS_Initiated a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Initiated"@en ;
+    skos:topConceptOf aiu:DevStageScheme ; skos:inScheme aiu:DevStageScheme .
+
+aiu:DS_AcqDev a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Acquisition and/or Development"@en ;
+    skos:topConceptOf aiu:DevStageScheme ; skos:inScheme aiu:DevStageScheme .
+
+aiu:DS_ImplAssess a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Implementation and Assessment"@en ;
+    skos:topConceptOf aiu:DevStageScheme ; skos:inScheme aiu:DevStageScheme .
+
+aiu:DS_OpsMaint a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Operation and Maintenance"@en ;
+    skos:topConceptOf aiu:DevStageScheme ; skos:inScheme aiu:DevStageScheme .
+
+aiu:DS_Retired a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Retired"@en ;
+    skos:topConceptOf aiu:DevStageScheme ; skos:inScheme aiu:DevStageScheme .
+
+
+### Impact Type (17_impact_type) — 4 enumerated values
+# Fix O-11 (replaces aiu:rightsImpactCategory xsd:string)
+
+aiu:ImpactTypeScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "AI Use Case Impact Type Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 17_impact_type (per OMB M-24-10 Section 6)" .
+
+aiu:IT_Rights a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Rights-Impacting"@en ;
+    skos:topConceptOf aiu:ImpactTypeScheme ; skos:inScheme aiu:ImpactTypeScheme .
+
+aiu:IT_Safety a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Safety-Impacting"@en ;
+    skos:topConceptOf aiu:ImpactTypeScheme ; skos:inScheme aiu:ImpactTypeScheme .
+
+aiu:IT_Both a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Both"@en ;
+    skos:topConceptOf aiu:ImpactTypeScheme ; skos:inScheme aiu:ImpactTypeScheme .
+
+aiu:IT_Neither a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Neither"@en ;
+    skos:topConceptOf aiu:ImpactTypeScheme ; skos:inScheme aiu:ImpactTypeScheme .
+
+
+### Demographic Features (35_demo_features) — 12 enumerated values
+# Fix O-12
+
+aiu:DemoFeatureScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "Demographic Feature Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 35_demo_features" .
+
+aiu:DF_Race a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Race/Ethnicity"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_Sex a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Sex/Gender"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_Age a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Age"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_Religion a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Religious Affiliation"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_SES a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Socioeconomic Status"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_Ability a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Ability Status"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_Residency a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Residency Status"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_Marital a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Marital Status"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_Income a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Income"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_Employment a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Employment Status"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_Other a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Other"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+aiu:DF_None a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "None"@en ;
+    skos:topConceptOf aiu:DemoFeatureScheme ; skos:inScheme aiu:DemoFeatureScheme .
+
+
+### Development Method (22_dev_method) — 3 enumerated values
+# Fix O-22
+
+aiu:DevMethodScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "AI Development Method Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 22_dev_method" .
+
+aiu:DM_Contracting a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Developed with contracting resources"@en ;
+    skos:topConceptOf aiu:DevMethodScheme ; skos:inScheme aiu:DevMethodScheme .
+
+aiu:DM_InHouse a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Developed in-house"@en ;
+    skos:topConceptOf aiu:DevMethodScheme ; skos:inScheme aiu:DevMethodScheme .
+
+aiu:DM_Both a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Developed with both contracting and in-house resources"@en ;
+    skos:topConceptOf aiu:DevMethodScheme ; skos:inScheme aiu:DevMethodScheme .
+
+
+### Code Access (38_code_access) — 3 enumerated values
+# Fix O-21
+
+aiu:CodeAccessScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "Code Access Type Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 38_code_access" .
+
+aiu:CA_PrivateSource a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Agency has access to source code (not public)"@en ;
+    skos:topConceptOf aiu:CodeAccessScheme ; skos:inScheme aiu:CodeAccessScheme .
+
+aiu:CA_PublicSource a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Source code is publicly available"@en ;
+    skos:topConceptOf aiu:CodeAccessScheme ; skos:inScheme aiu:CodeAccessScheme .
+
+aiu:CA_NoAccess a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Agency does not have access to source code"@en ;
+    skos:topConceptOf aiu:CodeAccessScheme ; skos:inScheme aiu:CodeAccessScheme .
+
+
+### Monitoring Maturity (56_monitor_postdeploy) — 4 levels
+# Fix O-17
+
+aiu:MonitoringMaturityScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "Post-Deployment Monitoring Maturity Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 56_monitor_postdeploy" .
+
+aiu:MM_None a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "No monitoring protocols established"@en ;
+    skos:topConceptOf aiu:MonitoringMaturityScheme ; skos:inScheme aiu:MonitoringMaturityScheme .
+
+aiu:MM_Manual a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Intermittent and manually updated"@en ;
+    skos:topConceptOf aiu:MonitoringMaturityScheme ; skos:inScheme aiu:MonitoringMaturityScheme .
+
+aiu:MM_Automated a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Automated and regularly scheduled updates"@en ;
+    skos:topConceptOf aiu:MonitoringMaturityScheme ; skos:inScheme aiu:MonitoringMaturityScheme .
+
+aiu:MM_MLOps a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Established process of machine learning operations"@en ;
+    skos:topConceptOf aiu:MonitoringMaturityScheme ; skos:inScheme aiu:MonitoringMaturityScheme .
+
+
+### Data Documentation Level (34_data_docs) — 4 levels
+# Fix O-18
+
+aiu:DataDocLevelScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "Training Data Documentation Level Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 34_data_docs" .
+
+aiu:DDL_Missing a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Documentation is missing or not available"@en ;
+    skos:topConceptOf aiu:DataDocLevelScheme ; skos:inScheme aiu:DataDocLevelScheme .
+
+aiu:DDL_Partial a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Documentation has been partially completed"@en ;
+    skos:topConceptOf aiu:DataDocLevelScheme ; skos:inScheme aiu:DataDocLevelScheme .
+
+aiu:DDL_Complete a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Documentation is complete"@en ;
+    skos:topConceptOf aiu:DataDocLevelScheme ; skos:inScheme aiu:DataDocLevelScheme .
+
+aiu:DDL_WidelyAvailable a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Documentation is widely available"@en ;
+    skos:topConceptOf aiu:DataDocLevelScheme ; skos:inScheme aiu:DataDocLevelScheme .
+
+
+### Real-World Testing Level (53_real_world_testing) — 5 levels
+# Fix O-19
+
+aiu:TestingLevelScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "Real-World Testing Level Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 53_real_world_testing" .
+
+aiu:TL_None a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "No testing"@en ;
+    skos:topConceptOf aiu:TestingLevelScheme ; skos:inScheme aiu:TestingLevelScheme .
+
+aiu:TL_Benchmark a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Benchmark evaluation"@en ;
+    skos:topConceptOf aiu:TestingLevelScheme ; skos:inScheme aiu:TestingLevelScheme .
+
+aiu:TL_PerfOps a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Performance evaluation in operational environment"@en ;
+    skos:topConceptOf aiu:TestingLevelScheme ; skos:inScheme aiu:TestingLevelScheme .
+
+aiu:TL_ImpactOps a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Impact evaluation in operational environment"@en ;
+    skos:topConceptOf aiu:TestingLevelScheme ; skos:inScheme aiu:TestingLevelScheme .
+
+aiu:TL_Waived a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Agency CAIO waived this minimum practice"@en ;
+    skos:topConceptOf aiu:TestingLevelScheme ; skos:inScheme aiu:TestingLevelScheme .
+
+
+### Internal Review Level (50_internal_review) — 4 levels
+# Fix O-20
+
+aiu:InternalReviewScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "Internal Model Review Level Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 50_internal_review" .
+
+aiu:IR_NoDocs a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "No documentation is available"@en ;
+    skos:topConceptOf aiu:InternalReviewScheme ; skos:inScheme aiu:InternalReviewScheme .
+
+aiu:IR_Limited a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Limited documentation for review"@en ;
+    skos:topConceptOf aiu:InternalReviewScheme ; skos:inScheme aiu:InternalReviewScheme .
+
+aiu:IR_Developed a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Documentation has been developed"@en ;
+    skos:topConceptOf aiu:InternalReviewScheme ; skos:inScheme aiu:InternalReviewScheme .
+
+aiu:IR_Published a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Documentation has been published"@en ;
+    skos:topConceptOf aiu:InternalReviewScheme ; skos:inScheme aiu:InternalReviewScheme .
+
+
+### HISP Scheme (24_hisp_support / 25_hisp_name) — complete, 38 HISPs
+# Source: data_dictionary.yaml field 25_hisp_name; labels match enum values exactly.
+
+aiu:HISPScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "High-Impact Service Provider Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 25_hisp_name" .
+
+aiu:HISP_BCA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Bureau of Consular Affairs"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_BIA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Bureau of Indian Affairs"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_BTFA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Bureau of Trust Funds Administration"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_CMS a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Centers for Medicare & Medicaid Services"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_CDFI a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Community Development Financial Institutions (CDFI) Fund"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_CBP a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Customs and Border Protection"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_DCSA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Defense Counterintelligence and Security Agency"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_DO a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Departmental Offices"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_EBSA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Employee Benefits Security Administration – DOL"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_ETA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Employment and Training Administration – DOL"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_FarmSA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Farm Service Agency – USDA"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_FEMA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Federal Emergency Management Agency – DHS"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_FES a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Federal Employment Service – OPM"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_FSA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Federal Student Aid – ED"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_FWS a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Fish and Wildlife Service – DOI"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_FNS a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Food and Nutrition Service – USDA"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_ForestS a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Forest Service – USDA"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_HUD a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Housing and Urban Development – HUD"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_IHS a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Indian Health Service – HHS"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_IRS a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Internal Revenue Service – TREAS"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_ITA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "International Trade Administration – DOC"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_NPS a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "National Park Service – DOI"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_NRCS a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Natural Resources Conservation Service – USDA"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_OSHA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Occupational Safety and Health Administration – DOL"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_OWCP a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Office of Workers' Compensation Programs – DOL"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_PEP a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Public Experience Portfolio – GSA"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_Recgov a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Recreation.gov – USDA"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_RetS a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Retirement Services – OPM"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_RD a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Rural Development – USDA"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_SBA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Small Business Administration – SBA"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_SSA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Social Security Administration – SSA"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_TSA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Transportation Security Administration – DHS"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_USAID a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "U.S. Agency for International Development – USAID"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_USCIS a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "U.S. Citizenship and Immigration Services – DHS"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_Census a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "United States Census Bureau"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_USPTO a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "United States Patent and Trademark Office"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_VBA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Veterans Benefits Administration"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+aiu:HISP_VHA a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Veterans Health Administration"@en ;
+    skos:topConceptOf aiu:HISPScheme ; skos:inScheme aiu:HISPScheme .
+
+
+### Commercial AI Type (10_commercial_ai) — complete, 19 COTS types plus None of the Above
+# Source: data_dictionary.yaml field 10_commercial_ai; labels match enum values exactly.
+
+aiu:CommercialAITypeScheme a skos:ConceptScheme, owl:NamedIndividual ;
+    skos:prefLabel "Commercial AI Tool Type Vocabulary"@en ;
+    dct:source "OMB data_dictionary.yaml field 10_commercial_ai" .
+
+aiu:CAI_DataEntry a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Inputting large amounts of data from paper forms into a digital system using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_ImageCatalog a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Identifying and cataloging items in a storage room using AI-driven image recognition."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_Transcription a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Transcribing and summarizing a recorded meeting or interview using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_Scheduling a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Scheduling meetings or appointments or setting reminders using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_EmailCateg a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Prioritizing and categorizing incoming emails using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_SocialMedia a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Scheduling and managing social media posts using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_TimeTrack a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Logging and analyzing time spent on tasks using AI-powered time management tools."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_LogAnalysis a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Identifying unusual patterns in system logs from a single incident report using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_Summarize a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Summarizing the key points of a lengthy report using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_Search a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Searching for information using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_DocDigitize a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Digitizing text from scanned documents or smart forms for archival purposes using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_WritingAssist a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Improving the quality of written communications using AI tools."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_Collab a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Collaborating in real-time using AI-assisted tools in word processors."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_Presentation a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Creating visually appealing presentations using AI-driven design suggestions."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_DataViz a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Creating visual representations of data sets for reports and presentations using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_NewsCurate a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Curating news articles and updates based on user preferences using AI."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_TravelRoute a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Planning travel routes using AI-driven map applications."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_TravelBook a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Finding and booking travel accommodations using AI-powered platforms."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_FaceRecog a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "Unlocking smartphones or other devices without the need for passwords or PINs using AI-based facial recognition technology."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+aiu:CAI_NoneOfTheAbove a skos:Concept, owl:NamedIndividual ;
+    skos:prefLabel "None of the Above"@en ;
+    skos:definition "The AI use case is NOT implemented solely with the listed commercial off-the-shelf products. This is the gate concept: records with this value require the full set of additional inventory fields."@en ;
+    skos:topConceptOf aiu:CommercialAITypeScheme ; skos:inScheme aiu:CommercialAITypeScheme .
+
+
+#################################################################
+# E. Organizations and roles
+# Fix O-1, O-4: updated CCO v2.0 IRIs for Organization (ont00001180)
+#################################################################
+
+aiu:Agency a owl:Class ;
+    rdfs:label "Agency" ;
+    rdfs:subClassOf cco:ont00001180 ;  # CCO Organization, v2.0 IRI
+    rdfs:comment "A federal department or independent agency responsible for one or more AI use cases in the inventory." .
+
+aiu:Bureau a owl:Class ;
+    rdfs:label "Bureau or component" ;
+    rdfs:subClassOf cco:ont00001180 ;  # CCO Organization, v2.0 IRI
+    rdfs:comment "An organizational unit (bureau, component, office) within an agency." .
+
+aiu:SystemOwnerRole a owl:Class ;
+    rdfs:label "System owner role" ;
+    rdfs:subClassOf bfo:0000023 ;  # BFO: role
+    rdfs:comment "A role borne by an agent responsible for the overall management and accountability of an AI system or use case." .
+
+aiu:DeveloperRole a owl:Class ;
+    rdfs:label "Developer role" ;
+    rdfs:subClassOf bfo:0000023 ;
+    rdfs:comment "A role borne by an agent responsible for designing, implementing, or configuring the AI system used in a use case." .
+
+aiu:OperatorRole a owl:Class ;
+    rdfs:label "Operator role" ;
+    rdfs:subClassOf bfo:0000023 ;
+    rdfs:comment "A role borne by an agent who operates or oversees the AI use case in day-to-day service delivery." .
+
+aiu:OversightRole a owl:Class ;
+    rdfs:label "Oversight role" ;
+    rdfs:subClassOf bfo:0000023 ;
+    rdfs:comment "A role borne by an agent responsible for oversight, compliance, or governance of an AI use case (e.g., CIO, SAOP, CAIO, risk committee)." .
+
+
+#################################################################
+# F. Systems, data, and outputs
+# Fix O-1: updated CCO v2.0 IRI for Artifact (ont00000995)
+#################################################################
+
+aiu:AISystem a owl:Class ;
+    rdfs:label "AI system" ;
+    rdfs:subClassOf cco:ont00000995 ;  # CCO Artifact, v2.0 IRI
+    rdfs:comment "A technical artifact (software and associated services) that implements one or more AI functions and participates in AI use case processes." .
+
+aiu:AIFunction a owl:Class ;
+    rdfs:label "AI function" ;
+    rdfs:subClassOf bfo:0000034 ;  # BFO: function
+    rdfs:comment "A function borne by an AI system, such as classification, recommendation, anomaly detection, or generation." .
+
+aiu:Dataset a owl:Class ;
+    rdfs:label "Dataset" ;
+    rdfs:subClassOf iao:0000100 ;  # IAO: dataset
+    rdfs:comment "A dataset used to train, fine-tune, evaluate, or operate an AI system in a use case, including agency-owned and external data." .
+
+aiu:AIOutputArtifact a owl:Class ;
+    rdfs:label "AI output artifact" ;
+    rdfs:subClassOf iao:0000005 ;  # IAO: data item
+    rdfs:comment "An information content entity that is the output of an AI use case process (e.g., risk score, classification, decision recommendation)." .
+
+
+#################################################################
+# G. Risk, impact, and governance
+# Fix O-2: AIImpactAssessmentProcess now subClassOf cco:ont00000228
+# Fix O-3: GovernancePolicy now uses cco:ont00000965
+#################################################################
+
+aiu:RiskRole a owl:Class ;
+    rdfs:label "Risk role" ;
+    rdfs:subClassOf bfo:0000023 ;  # BFO: role
+    rdfs:comment "A role borne by an AI use case process, system, or configuration that may be realized in an adverse impact on rights, safety, privacy, or other protected interests." .
+
+aiu:RightsImpactRiskRole a owl:Class ;
+    rdfs:label "Rights-impacting risk role" ;
+    rdfs:subClassOf aiu:RiskRole ;
+    rdfs:comment "A risk role indicating that the use of AI in a use case could significantly affect civil or human rights." .
+
+aiu:SafetyImpactRiskRole a owl:Class ;
+    rdfs:label "Safety-impacting risk role" ;
+    rdfs:subClassOf aiu:RiskRole ;
+    rdfs:comment "A risk role indicating that the use of AI in a use case could significantly affect safety, health, or bodily integrity." .
+
+aiu:PIIRiskRole a owl:Class ;
+    rdfs:label "PII-related risk role" ;
+    rdfs:subClassOf aiu:RiskRole ;
+    rdfs:comment "A risk role indicating that the use of AI in a use case involves personally identifiable information (PII) and associated privacy risks." .
+
+aiu:RiskAssessmentDocument a owl:Class ;
+    rdfs:label "Risk assessment document" ;
+    rdfs:subClassOf iao:0000310 ;  # IAO: document
+    rdfs:comment "A document that describes risks, impacts, and mitigations associated with an AI use case (e.g., AI impact assessment, privacy assessment)." .
+
+aiu:AIImpactAssessmentProcess a owl:Class ;
+    rdfs:label "AI impact assessment process" ;
+    rdfs:subClassOf cco:ont00000228 ;  # Fix O-2: CCO Planned Act, v2.0 IRI
+    rdfs:comment "A planned act that evaluates the potential and actual impacts of an AI use case on rights, safety, equity, or other protected interests." .
+
+aiu:GovernancePolicy a owl:Class ;
+    rdfs:label "Governance policy" ;
+    rdfs:subClassOf cco:ont00000965 ;  # Fix O-3: CCO Directive ICE, v2.0 IRI
+    rdfs:comment "A directive information content entity (e.g., policy, guidance) that prescribes governance, risk management, or oversight requirements for AI use cases." .
+
+
+#################################################################
+# H. Time and provenance
+# Fix O-6: TimeInstant now subClassOf bfo:0000203 (temporal instant, BFO 2020)
+#################################################################
+
+aiu:TimeInstant a owl:Class ;
+    rdfs:label "Time instant" ;
+    rdfs:subClassOf bfo:0000203 ;  # Fix O-6: BFO temporal instant (BFO 2020), not 0000008
+    rdfs:comment "A temporal instant (single point in time) used to represent key dates in the lifecycle of an AI use case (e.g., initiated, implemented, retired)." .
+
+
+#################################################################
+# I. Object properties
+#################################################################
+
+# Reused RO/BFO relations (for reference; IRIs come from RO/BFO):
+#   ro:has_part / bfo:0000050 / bfo:0000051
+#   bfo:0000052 inheres in / bfo:0000053 bearer of
+#   bfo:0000054 realized by / bfo:0000055 realizes
+#   ro:0000056 participates in / ro:0000057 has participant
+
+### Record ↔ Plan/Process/Snapshot
+
+aiu:describesPlan a owl:ObjectProperty ;
+    rdfs:label "describes plan" ;
+    rdfs:domain aiu:UseCaseRecord ; rdfs:range aiu:AIUseCasePlan ;
+    rdfs:comment "Relates an inventory record to the AI use case plan it describes." .
+
+aiu:describesProcess a owl:ObjectProperty ;
+    rdfs:label "describes process" ;
+    rdfs:domain aiu:UseCaseRecord ; rdfs:range aiu:AIUseCaseProcess ;
+    rdfs:comment "Relates an inventory record to the AI use case process it describes." .
+
+aiu:partOfInventory a owl:ObjectProperty ;
+    rdfs:label "part of inventory" ;
+    rdfs:domain aiu:UseCaseRecord ; rdfs:range aiu:InventorySnapshot ;
+    rdfs:comment "Relates a use case record to the annual inventory snapshot it belongs to." .
+
+### Agency and bureau
+
+aiu:hasAgency a owl:ObjectProperty ;
+    rdfs:label "has agency" ;
+    rdfs:domain aiu:UseCaseRecord ; rdfs:range aiu:Agency ;
+    rdfs:comment "Relates a use case record to the agency responsible for the use case." .
+
+aiu:hasBureau a owl:ObjectProperty ;
+    rdfs:label "has bureau or component" ;
+    rdfs:domain aiu:UseCaseRecord ; rdfs:range aiu:Bureau ;
+    rdfs:comment "Relates a use case record to the bureau or component within an agency." .
+
+### Plan ↔ Process / Goals
+
+aiu:hasPlannedProcess a owl:ObjectProperty ;
+    rdfs:label "has planned process" ;
+    rdfs:domain aiu:AIUseCasePlan ; rdfs:range aiu:AIUseCaseProcess ;
+    rdfs:comment "Relates a plan specification to the AI use case process it prescribes." .
+
+aiu:hasBusinessGoal a owl:ObjectProperty ;
+    rdfs:label "has business goal" ;
+    rdfs:domain aiu:AIUseCasePlan ; rdfs:range aiu:BusinessGoalConcept ;
+    rdfs:comment "Relates an AI use case plan to a business goal concept from the business-goal taxonomy that the plan aims to realize." .
+
+### Process ↔ categorized attributes (replaced xsd:string data props with SKOS ObjectProperties)
+
+aiu:hasTopicArea a owl:ObjectProperty ;
+    rdfs:label "has topic area" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to its topic area concept from the TopicAreaScheme vocabulary (field 8_topic_area)." .
+
+aiu:hasDevelopmentStage a owl:ObjectProperty ;
+    rdfs:label "has development stage" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to its current SDLC stage concept from the DevStageScheme vocabulary (field 16_dev_stage)." .
+
+aiu:hasImpactType a owl:ObjectProperty ;
+    rdfs:label "has impact type" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to its impact classification concept from the ImpactTypeScheme vocabulary (field 17_impact_type)." .
+
+aiu:usesDemographicFeature a owl:ObjectProperty ;
+    rdfs:label "uses demographic feature" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to demographic feature types explicitly used in its model/data (field 35_demo_features)." .
+
+aiu:hasCommercialAIType a owl:ObjectProperty ;
+    rdfs:label "has commercial AI type" ;
+    rdfs:domain aiu:UseCaseRecord ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates a use case record to its commercial AI tool classification from CommercialAITypeScheme (field 10_commercial_ai). Use aiu:CAI_NoneOfTheAbove for custom/non-COTS AI." .
+
+aiu:hasDevelopmentMethod a owl:ObjectProperty ;
+    rdfs:label "has development method" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to its development method concept from DevMethodScheme (field 22_dev_method)." .
+
+aiu:hasCodeAccess a owl:ObjectProperty ;
+    rdfs:label "has code access type" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to its code access classification from CodeAccessScheme (field 38_code_access)." .
+
+aiu:hasMonitoringMaturity a owl:ObjectProperty ;
+    rdfs:label "has monitoring maturity" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to its post-deployment monitoring maturity level from MonitoringMaturityScheme (field 56_monitor_postdeploy)." .
+
+aiu:hasDataDocLevel a owl:ObjectProperty ;
+    rdfs:label "has data documentation level" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to its training data documentation level from DataDocLevelScheme (field 34_data_docs)." .
+
+aiu:hasTestingLevel a owl:ObjectProperty ;
+    rdfs:label "has real-world testing level" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to its real-world testing level from TestingLevelScheme (field 53_real_world_testing)." .
+
+aiu:hasInternalReviewLevel a owl:ObjectProperty ;
+    rdfs:label "has internal review level" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to its internal model documentation review level from InternalReviewScheme (field 50_internal_review)." .
+
+aiu:supportsHISP a owl:ObjectProperty ;
+    rdfs:label "supports HISP" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range skos:Concept ;
+    rdfs:comment "Relates an AI use case process to the specific HISP it supports from HISPScheme (fields 24_hisp_support / 25_hisp_name)." .
+
+### Process ↔ technical components
+
+aiu:usesAISystem a owl:ObjectProperty ;
+    rdfs:label "uses AI system" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range aiu:AISystem ;
+    rdfs:comment "Relates an AI use case process to the AI system that participates in it." .
+
+aiu:hasInputDataset a owl:ObjectProperty ;
+    rdfs:label "has input dataset" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range aiu:Dataset ;
+    rdfs:comment "Relates an AI use case process to a dataset used as input." .
+
+aiu:hasOutputArtifact a owl:ObjectProperty ;
+    rdfs:label "has output artifact" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range aiu:AIOutputArtifact ;
+    rdfs:comment "Relates an AI use case process to an information artifact it produces." .
+
+### Risk and governance
+
+aiu:hasRiskRole a owl:ObjectProperty ;
+    rdfs:label "has risk role" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range aiu:RiskRole ;
+    rdfs:comment "Relates an AI use case process to a risk role that inheres in it." .
+
+aiu:assessedBy a owl:ObjectProperty ;
+    rdfs:label "assessed by" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range aiu:AIImpactAssessmentProcess ;
+    rdfs:comment "Relates an AI use case process to an impact assessment process that evaluates it." .
+
+aiu:hasAssessmentOutput a owl:ObjectProperty ;
+    rdfs:label "has assessment output" ;
+    rdfs:domain aiu:AIImpactAssessmentProcess ; rdfs:range aiu:RiskAssessmentDocument ;
+    rdfs:comment "Relates an impact assessment process to the risk assessment document it produces." .
+
+aiu:governedBy a owl:ObjectProperty ;
+    rdfs:label "governed by" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range aiu:GovernancePolicy ;
+    rdfs:comment "Relates an AI use case process to a governance policy that prescribes constraints, controls, or procedures for it." .
+
+### Temporal
+
+aiu:hasInitiationTime a owl:ObjectProperty ;
+    rdfs:label "has initiation time" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range aiu:TimeInstant ;
+    rdfs:comment "Time at which the AI use case purpose and high-level requirements were first defined (field 18_date_initiated)." .
+
+aiu:hasAcqDevTime a owl:ObjectProperty ;
+    rdfs:label "has acquisition/development start time" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range aiu:TimeInstant ;
+    rdfs:comment "Time at which acquisition and/or development of the AI system first began (field 19_date_acq_dev_began)." .
+
+aiu:hasImplementationTime a owl:ObjectProperty ;
+    rdfs:label "has implementation time" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range aiu:TimeInstant ;
+    rdfs:comment "Time at which the use case was fully implemented and deployed (field 20_date_implemented)." .
+
+aiu:hasRetirementTime a owl:ObjectProperty ;
+    rdfs:label "has retirement time" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range aiu:TimeInstant ;
+    rdfs:comment "Time at which the use case was retired or began retirement (field 21_date_retired)." .
+
+### Cross-year record continuity
+# Fix O-15
+
+aiu:possibleDuplicateOf a owl:ObjectProperty ;
+    rdfs:label "possible duplicate of" ;
+    rdfs:domain aiu:UseCaseRecord ; rdfs:range aiu:UseCaseRecord ;
+    owl:SymmetricProperty true ;
+    rdfs:comment "Relates two use case records suspected or determined to represent the same underlying AI use case (for duplication analysis and entity resolution)." .
+
+aiu:continuesFrom a owl:ObjectProperty ;
+    rdfs:label "continues from" ;
+    rdfs:domain aiu:UseCaseRecord ; rdfs:range aiu:UseCaseRecord ;
+    rdfs:comment "Relates a use case record in a later inventory year to the corresponding record in an earlier year, confirming cross-year identity of the same use case." .
+
+
+#################################################################
+# J. Data properties
+# Note: string-valued properties stageOfDevelopment and rightsImpactCategory
+# from the earlier draft were removed entirely; their semantics are now
+# captured by the object properties hasDevStage and hasImpactType (section I).
+#################################################################
+
+aiu:inventoryYear a owl:DatatypeProperty ;
+    rdfs:label "inventory year" ;
+    rdfs:domain aiu:InventorySnapshot ; rdfs:range xsd:gYear ;
+    rdfs:comment "The reporting year of the Federal AI Use Case Inventory (e.g., 2023, 2024)." .
+
+aiu:useCaseName a owl:DatatypeProperty ;
+    rdfs:label "use case name" ;
+    rdfs:domain aiu:UseCaseRecord ; rdfs:range xsd:string ;
+    rdfs:comment "Title of the AI use case as reported in the inventory (field 2_use_case_name)." .
+
+aiu:purposeBenefitsText a owl:DatatypeProperty ;
+    rdfs:label "purpose and benefits text" ;
+    rdfs:domain aiu:AIUseCasePlan ; rdfs:range xsd:string ;
+    rdfs:comment "Free-text description of the AI's intended purpose, problem solved, and expected benefits (field 11_purpose_benefits). Primary source for business goal classification." .
+
+aiu:outputsText a owl:DatatypeProperty ;
+    rdfs:label "AI system outputs text" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range xsd:string ;
+    rdfs:comment "Free-text description of what the AI system outputs (field 12_outputs). Secondary source for business goal classification." .
+
+aiu:agencyDataDescription a owl:DatatypeProperty ;
+    rdfs:label "agency data description" ;
+    rdfs:domain aiu:Dataset ; rdfs:range xsd:string ;
+    rdfs:comment "General description of training, fine-tuning, and evaluation data (field 33_agency_data)." .
+
+aiu:keyRisksText a owl:DatatypeProperty ;
+    rdfs:label "key risks text" ;
+    rdfs:domain aiu:RiskAssessmentDocument ; rdfs:range xsd:string ;
+    rdfs:comment "Free-text identification of reasonably foreseeable risks (field 54_key_risks)." .
+
+aiu:systemName a owl:DatatypeProperty ;
+    rdfs:label "system name" ;
+    rdfs:domain aiu:AISystem ; rdfs:range xsd:string ;
+    rdfs:comment "Name of the AI system according to the ATO (field 41_system_name)." .
+
+aiu:hasATO a owl:DatatypeProperty ;
+    rdfs:label "has ATO" ;
+    rdfs:domain aiu:AISystem ; rdfs:range xsd:boolean ;
+    rdfs:comment "Whether the AI system has an Authority to Operate (field 40_has_ato)." .
+
+aiu:usesPII a owl:DatatypeProperty ;
+    rdfs:label "uses PII" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range xsd:boolean ;
+    rdfs:comment "Whether the AI use case involves personally identifiable information (field 29_contains_pii)." .
+
+aiu:saopReviewed a owl:DatatypeProperty ;
+    rdfs:label "SAOP reviewed" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range xsd:boolean ;
+    rdfs:comment "Whether the SAOP has assessed privacy risks for this use case (field 30_saop_review)." .
+
+aiu:customCodePresent a owl:DatatypeProperty ;
+    rdfs:label "custom-developed code present" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range xsd:boolean ;
+    rdfs:comment "Whether the use case includes custom-developed code (field 37_custom_code)." .
+
+aiu:openSourceCodeURL a owl:DatatypeProperty ;
+    rdfs:label "open-source code URL" ;
+    rdfs:domain aiu:AISystem ; rdfs:range xsd:anyURI ;
+    rdfs:comment "URL to publicly available source code (field 39_code_link)." .
+
+aiu:autonomousImpact a owl:DatatypeProperty ;
+    rdfs:label "autonomous impact decisions" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range xsd:boolean ;
+    rdfs:comment "Whether the AI can carry out individual core decisions affecting rights/safety without direct human involvement (field 57_autonomous_impact)." .
+
+aiu:hasAppealProcess a owl:DatatypeProperty ;
+    rdfs:label "has appeal process" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range xsd:boolean ;
+    rdfs:comment "Whether an appeal/escalation fallback process exists for AI decisions (field 65_appeal_process)." .
+
+aiu:hasOptOut a owl:DatatypeProperty ;
+    rdfs:label "has opt-out mechanism" ;
+    rdfs:domain aiu:AIUseCaseProcess ; rdfs:range xsd:boolean ;
+    rdfs:comment "Whether an opt-out mechanism has been established (field 67_opt_out)." .

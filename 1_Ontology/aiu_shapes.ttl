@@ -1,0 +1,883 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix aiu:  <https://example.org/ai-usecase-ontology#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+#################################################################
+# Ontology header — imports base ontology; no OWL classes here.
+# Source: aiu_inventory_field_mapping.md (field-to-predicate mapping).
+# Designed for use with pySHACL or Apache Jena SHACL.
+#################################################################
+
+# SPARQL prefix declarations are placed directly on this ontology node so that
+# pySHACL, Apache Jena, and TopQuadrant SHACL can all resolve them reliably via
+#   sh:prefixes <https://example.org/ai-usecase-shapes>
+# If your engine requires inline PREFIX declarations instead, add them to each
+# sh:select / sh:ask string (e.g. PREFIX aiu: <...>) as a fallback.
+
+<https://example.org/ai-usecase-shapes>
+    a owl:Ontology ;
+    rdfs:label "AI Use Case SHACL Shapes v1.0" ;
+    rdfs:comment """SHACL validation shapes for the AIU Federal AI Use Case Inventory RDF graph.
+Imports aiu_ontology_ver1.ttl. Does not redefine any OWL classes.
+Source spec: aiu_inventory_field_mapping.md.""" ;
+    owl:versionInfo "1.0" ;
+    owl:imports <https://example.org/ai-usecase-ontology#> ;
+    dct:source "aiu_inventory_field_mapping.md" ;
+    sh:declare
+        [ sh:prefix "aiu"  ; sh:namespace "https://example.org/ai-usecase-ontology#"^^xsd:anyURI ] ,
+        [ sh:prefix "skos" ; sh:namespace "http://www.w3.org/2004/02/skos/core#"^^xsd:anyURI ] ,
+        [ sh:prefix "prov" ; sh:namespace "http://www.w3.org/ns/prov#"^^xsd:anyURI ] ,
+        [ sh:prefix "xsd"  ; sh:namespace "http://www.w3.org/2001/XMLSchema#"^^xsd:anyURI ] ,
+        [ sh:prefix "rdf"  ; sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ] .
+
+
+#################################################################
+# SHAPE 1 — aiu:UseCaseRecordShape
+# Target class: aiu:UseCaseRecord (every record, always validated)
+# Inventory §1 identifiers: fields 2, 3, 4, 10 + structural links
+#################################################################
+
+aiu:UseCaseRecordShape
+    a sh:NodeShape ;
+    sh:targetClass aiu:UseCaseRecord ;
+    rdfs:label "Use Case Record Shape" ;
+
+    # --- §1 field 2_use_case_name — always required ---
+    sh:property [
+        sh:path         aiu:useCaseName ;
+        sh:name         "use case name" ;
+        sh:datatype     xsd:string ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:message      "Every UseCaseRecord must have exactly one useCaseName (field 2_use_case_name)." ;
+    ] ;
+
+    # --- §1 field 3_agency — always required ---
+    sh:property [
+        sh:path         aiu:hasAgency ;
+        sh:name         "has agency" ;
+        sh:class        aiu:Agency ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:message      "Every UseCaseRecord must link to exactly one Agency (field 3_agency)." ;
+    ] ;
+
+    # --- PROV-O: prov:wasAttributedTo and prov:generatedAtTime ---
+    # Design decision (sh:Warning, not sh:Violation):
+    #   The ontology declares OWL someValuesFrom restrictions for both properties,
+    #   meaning every UseCaseRecord *should* carry them. However, in practice these
+    #   triples are computed by the ingestion pipeline (from the parent InventorySnapshot
+    #   and the agency link), not read directly from inventory CSV fields. Raw data loaded
+    #   before the PROV enrichment step will lack them. Using sh:Warning avoids flooding
+    #   the validation report during initial ingestion while still flagging missing triples.
+    #   To promote to hard errors after enrichment, change sh:severity to sh:Violation
+    #   and set sh:minCount 1.
+    sh:property [
+        sh:path         prov:wasAttributedTo ;
+        sh:name         "PROV attributed to agency" ;
+        sh:class        aiu:Agency ;
+        sh:minCount     0 ;
+        sh:maxCount     1 ;
+        sh:severity     sh:Warning ;
+        sh:message      "UseCaseRecord should carry prov:wasAttributedTo to its Agency (OWL someValuesFrom restriction; computed by pipeline)." ;
+    ] ;
+
+    sh:property [
+        sh:path         prov:generatedAtTime ;
+        sh:name         "PROV generated at time" ;
+        sh:datatype     xsd:dateTime ;
+        sh:minCount     0 ;
+        sh:maxCount     1 ;
+        sh:severity     sh:Warning ;
+        sh:message      "UseCaseRecord should carry prov:generatedAtTime (OWL someValuesFrom restriction; computed by pipeline)." ;
+    ] ;
+
+    # --- §1 field 4_bureau — always required ---
+    sh:property [
+        sh:path         aiu:hasBureau ;
+        sh:name         "has bureau or component" ;
+        sh:class        aiu:Bureau ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:message      "Every UseCaseRecord must link to exactly one Bureau (field 4_bureau)." ;
+    ] ;
+
+    # --- §1 field 10_commercial_ai — always required; gate field; 20 allowed concepts ---
+    sh:property [
+        sh:path         aiu:hasCommercialAIType ;
+        sh:name         "commercial AI type (gate field)" ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:in (
+            aiu:CAI_DataEntry    aiu:CAI_ImageCatalog  aiu:CAI_Transcription
+            aiu:CAI_Scheduling   aiu:CAI_EmailCateg    aiu:CAI_SocialMedia
+            aiu:CAI_TimeTrack    aiu:CAI_LogAnalysis   aiu:CAI_Summarize
+            aiu:CAI_Search       aiu:CAI_DocDigitize   aiu:CAI_WritingAssist
+            aiu:CAI_Collab       aiu:CAI_Presentation  aiu:CAI_DataViz
+            aiu:CAI_NewsCurate   aiu:CAI_TravelRoute   aiu:CAI_TravelBook
+            aiu:CAI_FaceRecog    aiu:CAI_NoneOfTheAbove
+        ) ;
+        sh:message      "hasCommercialAIType must be one of the 20 CommercialAITypeScheme concepts (field 10_commercial_ai)." ;
+    ] ;
+
+    # --- Structural links — always required ---
+    sh:property [
+        sh:path         aiu:describesPlan ;
+        sh:name         "describes plan" ;
+        sh:class        aiu:AIUseCasePlan ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:message      "Every UseCaseRecord must link to exactly one AIUseCasePlan via describesPlan." ;
+    ] ;
+
+    sh:property [
+        sh:path         aiu:describesProcess ;
+        sh:name         "describes process" ;
+        sh:class        aiu:AIUseCaseProcess ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:message      "Every UseCaseRecord must link to exactly one AIUseCaseProcess via describesProcess." ;
+    ] ;
+
+    sh:property [
+        sh:path         aiu:partOfInventory ;
+        sh:name         "part of inventory" ;
+        sh:class        aiu:InventorySnapshot ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:message      "Every UseCaseRecord must belong to exactly one InventorySnapshot via partOfInventory." ;
+    ] .
+
+
+#################################################################
+# SHAPE 2 — aiu:AIUseCasePlanShape
+# Target class: aiu:AIUseCasePlan (all plan nodes)
+# Inventory §1: field 11_purpose_benefits; derived: hasBusinessGoal
+#################################################################
+
+aiu:AIUseCasePlanShape
+    a sh:NodeShape ;
+    sh:targetClass aiu:AIUseCasePlan ;
+    rdfs:label "AI Use Case Plan Shape" ;
+
+    # --- §1 field 11_purpose_benefits — always required; primary NLP source ---
+    sh:property [
+        sh:path         aiu:purposeBenefitsText ;
+        sh:name         "purpose and benefits text" ;
+        sh:datatype     xsd:string ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:message      "Every AIUseCasePlan must have purposeBenefitsText (field 11_purpose_benefits)." ;
+    ] ;
+
+    # --- Derived: hasBusinessGoal — populated by NLP pipeline; optional in raw data ---
+    sh:property [
+        sh:path         aiu:hasBusinessGoal ;
+        sh:name         "has business goal" ;
+        sh:class        aiu:BusinessGoalConcept ;
+        sh:minCount     0 ;
+        sh:message      "hasBusinessGoal values must be BusinessGoalConcept instances (aiu:BG_*)." ;
+    ] ;
+
+    # --- Structural link to process ---
+    sh:property [
+        sh:path         aiu:hasPlannedProcess ;
+        sh:name         "has planned process" ;
+        sh:class        aiu:AIUseCaseProcess ;
+        sh:minCount     0 ;
+        sh:maxCount     1 ;
+        sh:message      "If hasPlannedProcess is specified, it must link to an AIUseCaseProcess." ;
+    ] .
+
+
+#################################################################
+# SHAPE 3 — aiu:AIUseCaseProcessShape
+# Target class: aiu:AIUseCaseProcess (ALL process nodes; always validated)
+# Inventory §1: fields 8_topic_area, 12_outputs, 16_dev_stage, 17_impact_type
+#################################################################
+
+aiu:AIUseCaseProcessShape
+    a sh:NodeShape ;
+    sh:targetClass aiu:AIUseCaseProcess ;
+    rdfs:label "AI Use Case Process Shape (core — always required)" ;
+
+    # --- §1 field 8_topic_area — always required; 10 allowed concepts ---
+    sh:property [
+        sh:path         aiu:hasTopicArea ;
+        sh:name         "topic area" ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:in (
+            aiu:TA_GovServices       aiu:TA_DiplomacyTrade   aiu:TA_EducationWorkforce
+            aiu:TA_EnergyEnvironment aiu:TA_EmergencyMgmt    aiu:TA_HealthMedical
+            aiu:TA_LawJustice        aiu:TA_ScienceSpace     aiu:TA_Transportation
+            aiu:TA_MissionEnabling
+        ) ;
+        sh:message      "hasTopicArea must be one of the 10 TopicAreaScheme concepts (field 8_topic_area)." ;
+    ] ;
+
+    # --- §1 field 12_outputs — always required; secondary NLP source ---
+    sh:property [
+        sh:path         aiu:outputsText ;
+        sh:name         "AI system outputs text" ;
+        sh:datatype     xsd:string ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:message      "Every AIUseCaseProcess must describe its outputs (field 12_outputs)." ;
+    ] ;
+
+    # --- §1 field 16_dev_stage — always required; 5 allowed concepts ---
+    sh:property [
+        sh:path         aiu:hasDevelopmentStage ;
+        sh:name         "development stage" ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:in (
+            aiu:DS_Initiated aiu:DS_AcqDev aiu:DS_ImplAssess
+            aiu:DS_OpsMaint  aiu:DS_Retired
+        ) ;
+        sh:message      "hasDevelopmentStage must be one of the 5 DevStageScheme concepts (field 16_dev_stage)." ;
+    ] ;
+
+    # --- §1 field 17_impact_type — always required; 4 allowed concepts ---
+    sh:property [
+        sh:path         aiu:hasImpactType ;
+        sh:name         "impact type" ;
+        sh:minCount     1 ;
+        sh:maxCount     1 ;
+        sh:in ( aiu:IT_Rights aiu:IT_Safety aiu:IT_Both aiu:IT_Neither ) ;
+        sh:message      "hasImpactType must be one of: IT_Rights, IT_Safety, IT_Both, IT_Neither (field 17_impact_type)." ;
+    ] .
+
+
+#################################################################
+# SHAPE 4 — aiu:FullRecordProcessShape
+# SPARQL target: AIUseCaseProcess nodes where the parent
+#   UseCaseRecord has hasCommercialAIType = aiu:CAI_NoneOfTheAbove.
+# Validates §2–4 conditional fields (all require gate = NoneOfAbove).
+# Uses sh:sparql constraints for stage-dependent sub-conditions.
+#################################################################
+
+aiu:FullRecordProcessShape
+    a sh:NodeShape ;
+    rdfs:label "Full Record Process Shape (gate = NoneOfTheAbove)" ;
+
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:prefixes <https://example.org/ai-usecase-shapes> ;
+        sh:select """
+            SELECT ?this WHERE {
+                ?record a aiu:UseCaseRecord ;
+                        aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+                        aiu:describesProcess ?this .
+            }
+        """ ;
+    ] ;
+
+    # -------------------------------------------------------
+    # §2 field 22_dev_method — value validation (always)
+    #   + SPARQL: required for stages AcqDev, ImplAssess, OpsMaint
+    # -------------------------------------------------------
+    sh:property [
+        sh:path         aiu:hasDevelopmentMethod ;
+        sh:name         "development method" ;
+        sh:minCount     0 ;
+        sh:in ( aiu:DM_Contracting aiu:DM_InHouse aiu:DM_Both ) ;
+        sh:message      "hasDevelopmentMethod must be one of the 3 DevMethodScheme concepts (field 22_dev_method)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name         "dev-method-required-acqdev-plus" ;
+        sh:message      "Full records at AcqDev, ImplAssess, or OpsMaint stage must specify hasDevelopmentMethod (field 22_dev_method)." ;
+        sh:prefixes     <https://example.org/ai-usecase-shapes> ;
+        sh:select       """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage IN (aiu:DS_AcqDev, aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+                FILTER NOT EXISTS { $this aiu:hasDevelopmentMethod ?dm . }
+            }
+        """ ;
+    ] ;
+
+    # -------------------------------------------------------
+    # §2 field 25_hisp_name — value validation when present
+    #   (Presence implies 24_hisp_support=Yes; no strict minCount
+    #    because the HISP gate 24_hisp_support is not modeled separately.)
+    # -------------------------------------------------------
+    sh:property [
+        sh:path         aiu:supportsHISP ;
+        sh:name         "supports HISP" ;
+        sh:minCount     0 ;
+        sh:in (
+            aiu:HISP_BCA   aiu:HISP_BIA    aiu:HISP_BTFA  aiu:HISP_CMS   aiu:HISP_CDFI
+            aiu:HISP_CBP   aiu:HISP_DCSA   aiu:HISP_DO    aiu:HISP_EBSA  aiu:HISP_ETA
+            aiu:HISP_FarmSA aiu:HISP_FEMA  aiu:HISP_FES   aiu:HISP_FSA   aiu:HISP_FWS
+            aiu:HISP_FNS   aiu:HISP_ForestS aiu:HISP_HUD  aiu:HISP_IHS   aiu:HISP_IRS
+            aiu:HISP_ITA   aiu:HISP_NPS    aiu:HISP_NRCS  aiu:HISP_OSHA  aiu:HISP_OWCP
+            aiu:HISP_PEP   aiu:HISP_Recgov aiu:HISP_RetS  aiu:HISP_RD    aiu:HISP_SBA
+            aiu:HISP_SSA   aiu:HISP_TSA    aiu:HISP_USAID aiu:HISP_USCIS
+            aiu:HISP_Census aiu:HISP_USPTO  aiu:HISP_VBA  aiu:HISP_VHA
+        ) ;
+        sh:message      "supportsHISP must be one of the 38 HISPScheme concepts (field 25_hisp_name)." ;
+    ] ;
+
+    # -------------------------------------------------------
+    # §2 field 29_contains_pii — value validation (always)
+    #   + SPARQL: required for stages ImplAssess, OpsMaint
+    # -------------------------------------------------------
+    sh:property [
+        sh:path         aiu:usesPII ;
+        sh:name         "uses PII" ;
+        sh:datatype     xsd:boolean ;
+        sh:minCount     0 ;
+        sh:maxCount     1 ;
+        sh:message      "aiu:usesPII must be xsd:boolean (field 29_contains_pii)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name         "pii-required-impl-plus" ;
+        sh:message      "Full records at ImplAssess or OpsMaint stage must specify usesPII (field 29_contains_pii)." ;
+        sh:prefixes     <https://example.org/ai-usecase-shapes> ;
+        sh:select       """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage IN (aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+                FILTER NOT EXISTS { $this aiu:usesPII ?pii . }
+            }
+        """ ;
+    ] ;
+
+    # -------------------------------------------------------
+    # §2 field 30_saop_review — value validation (always)
+    #   + SPARQL: required for stages ImplAssess, OpsMaint
+    # -------------------------------------------------------
+    sh:property [
+        sh:path         aiu:saopReviewed ;
+        sh:name         "SAOP reviewed" ;
+        sh:datatype     xsd:boolean ;
+        sh:minCount     0 ;
+        sh:maxCount     1 ;
+        sh:message      "aiu:saopReviewed must be xsd:boolean (field 30_saop_review)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name         "saop-required-impl-plus" ;
+        sh:message      "Full records at ImplAssess or OpsMaint stage must specify saopReviewed (field 30_saop_review)." ;
+        sh:prefixes     <https://example.org/ai-usecase-shapes> ;
+        sh:select       """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage IN (aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+                FILTER NOT EXISTS { $this aiu:saopReviewed ?reviewed . }
+            }
+        """ ;
+    ] ;
+
+    # -------------------------------------------------------
+    # §3 field 34_data_docs — value validation (always)
+    #   + SPARQL: required for stages AcqDev, ImplAssess, OpsMaint
+    # -------------------------------------------------------
+    sh:property [
+        sh:path         aiu:hasDataDocLevel ;
+        sh:name         "data documentation level" ;
+        sh:minCount     0 ;
+        sh:in ( aiu:DDL_Missing aiu:DDL_Partial aiu:DDL_Complete aiu:DDL_WidelyAvailable ) ;
+        sh:message      "hasDataDocLevel must be one of the 4 DataDocLevelScheme concepts (field 34_data_docs)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name         "datadoc-required-acqdev-plus" ;
+        sh:message      "Full records at AcqDev, ImplAssess, or OpsMaint stage must specify hasDataDocLevel (field 34_data_docs)." ;
+        sh:prefixes     <https://example.org/ai-usecase-shapes> ;
+        sh:select       """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage IN (aiu:DS_AcqDev, aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+                FILTER NOT EXISTS { $this aiu:hasDataDocLevel ?ddl . }
+            }
+        """ ;
+    ] ;
+
+    # -------------------------------------------------------
+    # §3 field 35_demo_features — value validation (always)
+    #   + SPARQL: at least one required for stages AcqDev+
+    # -------------------------------------------------------
+    sh:property [
+        sh:path         aiu:usesDemographicFeature ;
+        sh:name         "uses demographic feature" ;
+        sh:minCount     0 ;
+        sh:in (
+            aiu:DF_Race aiu:DF_Sex    aiu:DF_Age      aiu:DF_Religion aiu:DF_SES
+            aiu:DF_Ability aiu:DF_Residency aiu:DF_Marital aiu:DF_Income
+            aiu:DF_Employment aiu:DF_Other aiu:DF_None
+        ) ;
+        sh:message      "usesDemographicFeature values must be from the 12 DemoFeatureScheme concepts (field 35_demo_features)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name         "demofeat-required-acqdev-plus" ;
+        sh:message      "Full records at AcqDev, ImplAssess, or OpsMaint stage must specify at least one usesDemographicFeature (field 35_demo_features)." ;
+        sh:prefixes     <https://example.org/ai-usecase-shapes> ;
+        sh:select       """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage IN (aiu:DS_AcqDev, aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+                FILTER NOT EXISTS { $this aiu:usesDemographicFeature ?df . }
+            }
+        """ ;
+    ] ;
+
+    # -------------------------------------------------------
+    # §3 field 37_custom_code — value validation (always)
+    #   + SPARQL: required for stages ImplAssess, OpsMaint
+    # -------------------------------------------------------
+    sh:property [
+        sh:path         aiu:customCodePresent ;
+        sh:name         "custom code present" ;
+        sh:datatype     xsd:boolean ;
+        sh:minCount     0 ;
+        sh:maxCount     1 ;
+        sh:message      "aiu:customCodePresent must be xsd:boolean (field 37_custom_code)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name         "customcode-required-impl-plus" ;
+        sh:message      "Full records at ImplAssess or OpsMaint stage must specify customCodePresent (field 37_custom_code)." ;
+        sh:prefixes     <https://example.org/ai-usecase-shapes> ;
+        sh:select       """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage IN (aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+                FILTER NOT EXISTS { $this aiu:customCodePresent ?cc . }
+            }
+        """ ;
+    ] ;
+
+    # -------------------------------------------------------
+    # §3 field 38_code_access — value validation (always)
+    #   + SPARQL: required for stages ImplAssess, OpsMaint
+    # -------------------------------------------------------
+    sh:property [
+        sh:path         aiu:hasCodeAccess ;
+        sh:name         "code access type" ;
+        sh:minCount     0 ;
+        sh:in ( aiu:CA_PrivateSource aiu:CA_PublicSource aiu:CA_NoAccess ) ;
+        sh:message      "hasCodeAccess must be one of the 3 CodeAccessScheme concepts (field 38_code_access)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name         "codeaccess-required-impl-plus" ;
+        sh:message      "Full records at ImplAssess or OpsMaint stage must specify hasCodeAccess (field 38_code_access)." ;
+        sh:prefixes     <https://example.org/ai-usecase-shapes> ;
+        sh:select       """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage IN (aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+                FILTER NOT EXISTS { $this aiu:hasCodeAccess ?ca . }
+            }
+        """ ;
+    ] ;
+
+    # §3 field 39_code_link — when CA_PublicSource, linked AISystem must have URL
+    sh:sparql [
+        sh:name         "code-url-required-when-public" ;
+        sh:message      "When hasCodeAccess = CA_PublicSource, the linked AISystem must have openSourceCodeURL (field 39_code_link)." ;
+        sh:prefixes     <https://example.org/ai-usecase-shapes> ;
+        sh:select       """
+            SELECT $this WHERE {
+                $this aiu:hasCodeAccess aiu:CA_PublicSource ;
+                      aiu:usesAISystem  ?system .
+                FILTER NOT EXISTS { ?system aiu:openSourceCodeURL ?url . }
+            }
+        """ ;
+    ] ;
+
+    # -------------------------------------------------------
+    # §4 field 50_internal_review — value validation (always)
+    #   + SPARQL: required for stages AcqDev, ImplAssess, OpsMaint
+    # -------------------------------------------------------
+    sh:property [
+        sh:path         aiu:hasInternalReviewLevel ;
+        sh:name         "internal review level" ;
+        sh:minCount     0 ;
+        sh:in ( aiu:IR_NoDocs aiu:IR_Limited aiu:IR_Developed aiu:IR_Published ) ;
+        sh:message      "hasInternalReviewLevel must be one of the 4 InternalReviewScheme concepts (field 50_internal_review)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name         "internalreview-required-acqdev-plus" ;
+        sh:message      "Full records at AcqDev, ImplAssess, or OpsMaint stage must specify hasInternalReviewLevel (field 50_internal_review)." ;
+        sh:prefixes     <https://example.org/ai-usecase-shapes> ;
+        sh:select       """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage IN (aiu:DS_AcqDev, aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+                FILTER NOT EXISTS { $this aiu:hasInternalReviewLevel ?ir . }
+            }
+        """ ;
+    ] ;
+
+    # -------------------------------------------------------
+    # §2 Date fields — type check (always); SPARQL enforces
+    #   stage-specific cardinality requirements.
+    # -------------------------------------------------------
+
+    # field 18_date_initiated — required when stage ≠ Retired
+    sh:property [
+        sh:path     aiu:hasInitiationTime ;
+        sh:name     "initiation time" ;
+        sh:class    aiu:TimeInstant ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message  "hasInitiationTime must link to an aiu:TimeInstant (field 18_date_initiated)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name     "initiation-date-required-non-retired" ;
+        sh:message  "Full records that are not at the Retired stage must have hasInitiationTime (field 18_date_initiated)." ;
+        sh:prefixes <https://example.org/ai-usecase-shapes> ;
+        sh:select   """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage != aiu:DS_Retired)
+                FILTER NOT EXISTS { $this aiu:hasInitiationTime ?t . }
+            }
+        """ ;
+    ] ;
+
+    # field 19_date_acq_dev_began — required for stages AcqDev, ImplAssess, OpsMaint
+    sh:property [
+        sh:path     aiu:hasAcqDevTime ;
+        sh:name     "acquisition/development start time" ;
+        sh:class    aiu:TimeInstant ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message  "hasAcqDevTime must link to an aiu:TimeInstant (field 19_date_acq_dev_began)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name     "acqdev-date-required" ;
+        sh:message  "Full records at AcqDev, ImplAssess, or OpsMaint stage must have hasAcqDevTime (field 19_date_acq_dev_began)." ;
+        sh:prefixes <https://example.org/ai-usecase-shapes> ;
+        sh:select   """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage IN (aiu:DS_AcqDev, aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+                FILTER NOT EXISTS { $this aiu:hasAcqDevTime ?t . }
+            }
+        """ ;
+    ] ;
+
+    # field 20_date_implemented — required for stages ImplAssess, OpsMaint
+    sh:property [
+        sh:path     aiu:hasImplementationTime ;
+        sh:name     "implementation time" ;
+        sh:class    aiu:TimeInstant ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message  "hasImplementationTime must link to an aiu:TimeInstant (field 20_date_implemented)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name     "impl-date-required" ;
+        sh:message  "Full records at ImplAssess or OpsMaint stage must have hasImplementationTime (field 20_date_implemented)." ;
+        sh:prefixes <https://example.org/ai-usecase-shapes> ;
+        sh:select   """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage ?stage .
+                FILTER (?stage IN (aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+                FILTER NOT EXISTS { $this aiu:hasImplementationTime ?t . }
+            }
+        """ ;
+    ] ;
+
+    # field 21_date_retired — required when stage = Retired
+    sh:property [
+        sh:path     aiu:hasRetirementTime ;
+        sh:name     "retirement time" ;
+        sh:class    aiu:TimeInstant ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message  "hasRetirementTime must link to an aiu:TimeInstant (field 21_date_retired)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name     "retirement-date-required-for-retired" ;
+        sh:message  "Full records at Retired stage must have hasRetirementTime (field 21_date_retired)." ;
+        sh:prefixes <https://example.org/ai-usecase-shapes> ;
+        sh:select   """
+            SELECT $this WHERE {
+                $this aiu:hasDevelopmentStage aiu:DS_Retired .
+                FILTER NOT EXISTS { $this aiu:hasRetirementTime ?t . }
+            }
+        """ ;
+    ] .
+
+
+#################################################################
+# SHAPE 5 — aiu:RiskRecordShape
+# SPARQL target: AIUseCaseProcess nodes where ALL of:
+#   (a) parent UseCaseRecord has gate = CAI_NoneOfTheAbove
+#   (b) hasImpactType ∈ { IT_Rights, IT_Safety, IT_Both }
+#   (c) hasDevelopmentStage ∈ { DS_ImplAssess, DS_OpsMaint }
+# Inventory §5: fields 52, 53, 56, 57 (all rights/safety records)
+#################################################################
+
+aiu:RiskRecordShape
+    a sh:NodeShape ;
+    rdfs:label "Risk Record Shape (rights/safety/both — Impl/Ops)" ;
+
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:prefixes <https://example.org/ai-usecase-shapes> ;
+        sh:select """
+            SELECT ?this WHERE {
+                ?record a aiu:UseCaseRecord ;
+                        aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+                        aiu:describesProcess ?this .
+                ?this aiu:hasImpactType ?impact ;
+                      aiu:hasDevelopmentStage ?stage .
+                FILTER (?impact IN (aiu:IT_Rights, aiu:IT_Safety, aiu:IT_Both))
+                FILTER (?stage IN (aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+            }
+        """ ;
+    ] ;
+
+    # --- §5 field 52_impact_assessment — presence of AIImpactAssessmentProcess ---
+    sh:property [
+        sh:path     aiu:assessedBy ;
+        sh:name     "assessed by" ;
+        sh:class    aiu:AIImpactAssessmentProcess ;
+        sh:minCount 1 ;
+        sh:message  "Rights/safety-impacting use cases at Impl/Ops stage must have an AIImpactAssessmentProcess (field 52_impact_assessment)." ;
+    ] ;
+
+    # --- §5 field 53_real_world_testing — 5 allowed concepts (incl. Waived) ---
+    sh:property [
+        sh:path     aiu:hasTestingLevel ;
+        sh:name     "real-world testing level" ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:in (
+            aiu:TL_None aiu:TL_Benchmark aiu:TL_PerfOps
+            aiu:TL_ImpactOps aiu:TL_Waived
+        ) ;
+        sh:message  "Rights/safety-impacting use cases at Impl/Ops stage must specify hasTestingLevel (field 53_real_world_testing)." ;
+    ] ;
+
+    # --- §5 field 56_monitor_postdeploy — 4 allowed concepts ---
+    sh:property [
+        sh:path     aiu:hasMonitoringMaturity ;
+        sh:name     "monitoring maturity" ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:in ( aiu:MM_None aiu:MM_Manual aiu:MM_Automated aiu:MM_MLOps ) ;
+        sh:message  "Rights/safety-impacting use cases at Impl/Ops stage must specify hasMonitoringMaturity (field 56_monitor_postdeploy)." ;
+    ] ;
+
+    # --- §5 field 57_autonomous_impact ---
+    sh:property [
+        sh:path     aiu:autonomousImpact ;
+        sh:name     "autonomous impact" ;
+        sh:datatype xsd:boolean ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message  "Rights/safety-impacting use cases at Impl/Ops stage must specify autonomousImpact (field 57_autonomous_impact)." ;
+    ] .
+
+
+#################################################################
+# SHAPE 6 — aiu:RightsRecordShape
+# SPARQL target: AIUseCaseProcess nodes where ALL of:
+#   (a) parent UseCaseRecord has gate = CAI_NoneOfTheAbove
+#   (b) hasImpactType ∈ { IT_Rights, IT_Both }   ← rights only, not safety-only
+#   (c) hasDevelopmentStage ∈ { DS_ImplAssess, DS_OpsMaint }
+# Inventory §5: fields 65_appeal_process, 67_opt_out
+#   (per data_dictionary.yaml — these fields are NOT required for
+#    safety-only records; only rights-impacting records trigger them)
+#################################################################
+
+aiu:RightsRecordShape
+    a sh:NodeShape ;
+    rdfs:label "Rights Record Shape (rights/both — Impl/Ops)" ;
+
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:prefixes <https://example.org/ai-usecase-shapes> ;
+        sh:select """
+            SELECT ?this WHERE {
+                ?record a aiu:UseCaseRecord ;
+                        aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+                        aiu:describesProcess ?this .
+                ?this aiu:hasImpactType ?impact ;
+                      aiu:hasDevelopmentStage ?stage .
+                FILTER (?impact IN (aiu:IT_Rights, aiu:IT_Both))
+                FILTER (?stage IN (aiu:DS_ImplAssess, aiu:DS_OpsMaint))
+            }
+        """ ;
+    ] ;
+
+    # --- §5 field 65_appeal_process ---
+    sh:property [
+        sh:path     aiu:hasAppealProcess ;
+        sh:name     "has appeal process" ;
+        sh:datatype xsd:boolean ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message  "Rights-impacting use cases at Impl/Ops stage must specify hasAppealProcess (field 65_appeal_process)." ;
+    ] ;
+
+    # --- §5 field 67_opt_out ---
+    sh:property [
+        sh:path     aiu:hasOptOut ;
+        sh:name     "has opt-out mechanism" ;
+        sh:datatype xsd:boolean ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message  "Rights-impacting use cases at Impl/Ops stage must specify hasOptOut (field 67_opt_out)." ;
+    ] .
+
+
+#################################################################
+# SHAPE 7 — aiu:AISystemShape
+# Target class: aiu:AISystem (all AI system nodes)
+# Inventory §4: fields 40_has_ato, 41_system_name, 39_code_link
+#################################################################
+
+aiu:AISystemShape
+    a sh:NodeShape ;
+    sh:targetClass aiu:AISystem ;
+    rdfs:label "AI System Shape" ;
+
+    # --- §4 field 40_has_ato — optional; boolean ---
+    sh:property [
+        sh:path     aiu:hasATO ;
+        sh:name     "has ATO" ;
+        sh:datatype xsd:boolean ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message  "aiu:hasATO must be xsd:boolean (field 40_has_ato)." ;
+    ] ;
+
+    # --- §4 field 41_system_name — required when hasATO = true ---
+    sh:property [
+        sh:path     aiu:systemName ;
+        sh:name     "system name" ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message  "aiu:systemName must be xsd:string (field 41_system_name)." ;
+    ] ;
+
+    sh:sparql [
+        sh:name     "system-name-required-when-ato" ;
+        sh:message  "An AISystem with hasATO = true must have a systemName (field 41_system_name)." ;
+        sh:prefixes <https://example.org/ai-usecase-shapes> ;
+        sh:select   """
+            SELECT $this WHERE {
+                $this aiu:hasATO true .
+                FILTER NOT EXISTS { $this aiu:systemName ?name . }
+            }
+        """ ;
+    ] ;
+
+    # --- §3 field 39_code_link — optional; xsd:anyURI when present ---
+    sh:property [
+        sh:path     aiu:openSourceCodeURL ;
+        sh:name     "open-source code URL" ;
+        sh:datatype xsd:anyURI ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message  "aiu:openSourceCodeURL must be xsd:anyURI (field 39_code_link)." ;
+    ] .
+
+
+#################################################################
+# SHAPE 8 — aiu:InventorySnapshotShape
+# Target class: aiu:InventorySnapshot (one node per inventory year)
+# Derived: aiu:inventoryYear (xsd:gYear)
+#################################################################
+
+aiu:InventorySnapshotShape
+    a sh:NodeShape ;
+    sh:targetClass aiu:InventorySnapshot ;
+    rdfs:label "Inventory Snapshot Shape" ;
+
+    sh:property [
+        sh:path     aiu:inventoryYear ;
+        sh:name     "inventory year" ;
+        sh:datatype xsd:gYear ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message  "Every InventorySnapshot must have exactly one inventoryYear (xsd:gYear, e.g., 2024)." ;
+    ] .
+
+
+#################################################################
+# SHAPE 9 — aiu:RiskAssessmentDocumentShape
+# Target class: aiu:RiskAssessmentDocument
+# Inventory §5: field 54_key_risks
+#################################################################
+
+aiu:RiskAssessmentDocumentShape
+    a sh:NodeShape ;
+    sh:targetClass aiu:RiskAssessmentDocument ;
+    rdfs:label "Risk Assessment Document Shape" ;
+
+    # --- §5 field 54_key_risks — required text ---
+    sh:property [
+        sh:path     aiu:keyRisksText ;
+        sh:name     "key risks text" ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message  "Every RiskAssessmentDocument must have keyRisksText (field 54_key_risks)." ;
+    ] .
+
+
+#################################################################
+# SHAPE 10 — aiu:DatasetShape
+# Target class: aiu:Dataset
+# Inventory §3: field 33_agency_data
+#################################################################
+
+aiu:DatasetShape
+    a sh:NodeShape ;
+    sh:targetClass aiu:Dataset ;
+    rdfs:label "Dataset Shape" ;
+
+    # --- §3 field 33_agency_data — free-text description ---
+    sh:property [
+        sh:path     aiu:agencyDataDescription ;
+        sh:name     "agency data description" ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+        sh:message  "aiu:agencyDataDescription must be xsd:string (field 33_agency_data)." ;
+    ] .
+
+
+#################################################################
+# SHAPE 11 — aiu:TimeInstantShape (placeholder)
+# Target class: aiu:TimeInstant
+# Note on literal date values:
+#   The OMB data dictionary stores lifecycle dates as MM/YYYY strings
+#   (fields 18–21). In the current ontology, aiu:TimeInstant is a BFO
+#   temporal-instant OWL class — no data property is defined on it for
+#   the literal date value. When a literal-carrying property is added
+#   (recommended: aiu:dateValue xsd:gYearMonth or xsd:string with
+#   sh:pattern "^(0[1-9]|1[0-2])/[0-9]{4}$"), add a sh:property
+#   constraint here to validate format.
+#   This shape currently acts only as a structural placeholder.
+#################################################################
+
+aiu:TimeInstantShape
+    a sh:NodeShape ;
+    sh:targetClass aiu:TimeInstant ;
+    rdfs:label "Time Instant Shape (placeholder)" .
