@@ -1,0 +1,502 @@
+@prefix aiu: <https://example.org/ai-usecase-ontology#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+aiu:ucr_2024_CFPB_4 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_CFPB_4 ;
+    aiu:describesProcess aiu:proc_2024_CFPB_4 ;
+    aiu:hasAgency aiu:agency_CFPB ;
+    aiu:hasBureau aiu:bureau_CFPB ;
+    aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Document Review Tool"^^xsd:string .
+
+aiu:ucr_2024_CFPB_5 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_CFPB_5 ;
+    aiu:describesProcess aiu:proc_2024_CFPB_5 ;
+    aiu:hasAgency aiu:agency_CFPB ;
+    aiu:hasBureau aiu:bureau_CFPB ;
+    aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Complaint Summarization"^^xsd:string .
+
+aiu:ucr_2024_CFTC_6 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_CFTC_6 ;
+    aiu:describesProcess aiu:proc_2024_CFTC_6 ;
+    aiu:hasAgency aiu:agency_CFTC ;
+    aiu:hasBureau aiu:bureau_DOE ;
+    aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Spoofing Detection AI/ML Project"^^xsd:string .
+
+aiu:ucr_2024_CFTC_7 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_CFTC_7 ;
+    aiu:describesProcess aiu:proc_2024_CFTC_7 ;
+    aiu:hasAgency aiu:agency_CFTC ;
+    aiu:hasBureau aiu:bureau_DCR ;
+    aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Stress Testing Scenarios with Deep Learning"^^xsd:string .
+
+aiu:ucr_2024_CFTC_8 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_CFTC_8 ;
+    aiu:describesProcess aiu:proc_2024_CFTC_8 ;
+    aiu:hasAgency aiu:agency_CFTC ;
+    aiu:hasBureau aiu:bureau_MPD ;
+    aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "MPD Entity Risk Modeling"^^xsd:string .
+
+aiu:ucr_2024_CFTC_9 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_CFTC_9 ;
+    aiu:describesProcess aiu:proc_2024_CFTC_9 ;
+    aiu:hasAgency aiu:agency_CFTC ;
+    aiu:hasBureau aiu:bureau_DOD ;
+    aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Anomaly Detection for Data Quality"^^xsd:string .
+
+aiu:ucr_2024_DHS_10 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_DHS_10 ;
+    aiu:describesProcess aiu:proc_2024_DHS_10 ;
+    aiu:hasAgency aiu:agency_DHS ;
+    aiu:hasBureau aiu:bureau_DHS ;
+    aiu:hasCommercialAIType aiu:CAI_WritingAssist ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Commercial Generative AI for Text Generation (AI Chatbot)"^^xsd:string .
+
+aiu:ucr_2024_DHS_2 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_DHS_2 ;
+    aiu:describesProcess aiu:proc_2024_DHS_2 ;
+    aiu:hasAgency aiu:agency_DHS ;
+    aiu:hasBureau aiu:bureau_CBP ;
+    aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Babel"^^xsd:string .
+
+aiu:ucr_2024_DHS_3 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_DHS_3 ;
+    aiu:describesProcess aiu:proc_2024_DHS_3 ;
+    aiu:hasAgency aiu:agency_DHS ;
+    aiu:hasBureau aiu:bureau_TSA ;
+    aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Automated Target Recognition (ATR) Developments for Standard Screening"^^xsd:string .
+
+aiu:ucr_2024_DOC_11 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_DOC_11 ;
+    aiu:describesProcess aiu:proc_2024_DOC_11 ;
+    aiu:hasAgency aiu:agency_DOC ;
+    aiu:hasBureau aiu:bureau_ITA_International_Trade_A ;
+    aiu:hasCommercialAIType aiu:CAI_WritingAssist ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Generative AI Tools Pilot - Global Markets"^^xsd:string .
+
+aiu:ucr_2024_DOC_12 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_DOC_12 ;
+    aiu:describesProcess aiu:proc_2024_DOC_12 ;
+    aiu:hasAgency aiu:agency_DOC ;
+    aiu:hasBureau aiu:bureau_ITA_International_Trade_A ;
+    aiu:hasCommercialAIType aiu:CAI_Search ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Global Business Navigator Chatbot"^^xsd:string .
+
+aiu:ucr_2024_DOC_13 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_DOC_13 ;
+    aiu:describesProcess aiu:proc_2024_DOC_13 ;
+    aiu:hasAgency aiu:agency_DOC ;
+    aiu:hasBureau aiu:bureau_NIST_National_Institute_o ;
+    aiu:hasCommercialAIType aiu:CAI_WritingAssist ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Grammarly"^^xsd:string .
+
+aiu:ucr_2024_DOC_14 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_DOC_14 ;
+    aiu:describesProcess aiu:proc_2024_DOC_14 ;
+    aiu:hasAgency aiu:agency_DOC ;
+    aiu:hasBureau aiu:bureau_CENSUS_US_Census_Bureau ;
+    aiu:hasCommercialAIType aiu:CAI_Search ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "FAQ for SMaRT"^^xsd:string .
+
+aiu:ucr_2024_VA_0 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_VA_0 ;
+    aiu:describesProcess aiu:proc_2024_VA_0 ;
+    aiu:hasAgency aiu:agency_VA ;
+    aiu:hasBureau aiu:bureau_VBA_Veterans_Benefits_Adm ;
+    aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Automated Decision Support"^^xsd:string .
+
+aiu:ucr_2024_VA_1 a aiu:UseCaseRecord ;
+    aiu:describesPlan aiu:plan_2024_VA_1 ;
+    aiu:describesProcess aiu:proc_2024_VA_1 ;
+    aiu:hasAgency aiu:agency_VA ;
+    aiu:hasBureau aiu:bureau_VHA_Veterans_Health_Admin ;
+    aiu:hasCommercialAIType aiu:CAI_NoneOfTheAbove ;
+    aiu:partOfInventory aiu:inv2024 ;
+    aiu:useCaseName "Sybil - Lung Cancer Prediction Model by MIT"^^xsd:string .
+
+aiu:bureau_CBP a aiu:Bureau ;
+    rdfs:label "CBP"^^xsd:string .
+
+aiu:bureau_CENSUS_US_Census_Bureau a aiu:Bureau ;
+    rdfs:label "CENSUS - U.S. Census Bureau"^^xsd:string .
+
+aiu:bureau_DCR a aiu:Bureau ;
+    rdfs:label "DCR"^^xsd:string .
+
+aiu:bureau_DHS a aiu:Bureau ;
+    rdfs:label "DHS"^^xsd:string .
+
+aiu:bureau_DOD a aiu:Bureau ;
+    rdfs:label "DOD"^^xsd:string .
+
+aiu:bureau_DOE a aiu:Bureau ;
+    rdfs:label "DOE"^^xsd:string .
+
+aiu:bureau_MPD a aiu:Bureau ;
+    rdfs:label "MPD"^^xsd:string .
+
+aiu:bureau_NIST_National_Institute_o a aiu:Bureau ;
+    rdfs:label "NIST - National Institute of Science and Technology"^^xsd:string .
+
+aiu:bureau_TSA a aiu:Bureau ;
+    rdfs:label "TSA"^^xsd:string .
+
+aiu:bureau_VBA_Veterans_Benefits_Adm a aiu:Bureau ;
+    rdfs:label "VBA: Veterans Benefits Administration"^^xsd:string .
+
+aiu:bureau_VHA_Veterans_Health_Admin a aiu:Bureau ;
+    rdfs:label "VHA: Veterans Health Administration"^^xsd:string .
+
+aiu:plan_2024_CFPB_4 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_4_1,  # Process efficiency and waste reduction
+        aiu:BG_7_4,  # Ethics, fraud, and whistleblowing
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText "Support investigations through document review assistance Key documents"^^xsd:string .
+
+aiu:plan_2024_CFPB_5 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_4_1,  # Process efficiency and waste reduction
+        aiu:BG_4_4,  # Scaling operations without degrading quality or CX
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText "Support staff that analyze complaints by helping to scale internal review of consumers' complaint narratives and companies' response narratives in light of increasing complaint volumes. Cost avoidance. Brief narrative summaries describing concepts included in complaint narratives."^^xsd:string .
+
+aiu:plan_2024_CFTC_6 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_7_1,  # Regulatory and legal compliance
+        aiu:BG_7_4,  # Ethics, fraud, and whistleblowing
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText "Pilot project that applied AI/ML techniques to identify spoofing patterns in order message data. Project used a variety of supervised and unsupervised techniques trained with DOE's existing set of expert based spoofing detection algorithms. Model provides probability of spoofing behavior for every individual trader in a specified market on a specified day"^^xsd:string .
+
+aiu:plan_2024_CFTC_7 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_1_4,  # Strategic planning and scaling under uncertainty
+        aiu:BG_5_4,  # Leverage, market risk, and financial risk management
+        aiu:BG_8_3,  # Automation and AI enablement
+        aiu:BG_9_1 ;  # Macroeconomic resilience
+    aiu:purposeBenefitsText "Pilot project to explore neural-network based machine learning methods for creating stress testing scenarios and estimating PnL (profit and loss) on FO (Futures and Options) portfolios based on the current/recent market states/conditions. The AI generates predicted price movements based on provided input probabilities"^^xsd:string .
+
+aiu:plan_2024_CFTC_8 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_3_3,  # Innovation pace and responsiveness
+        aiu:BG_7_1,  # Regulatory and legal compliance
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText "Entity-level risk modeling project. Use statistical and probabalistic models to predict firms experiencing changes in capital levels. Very early stage R&D effort. Now-cast score for each registrant and each day indicating probability or risk category for near-future capital adjustment indicator statisitc"^^xsd:string .
+
+aiu:plan_2024_CFTC_9 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_3_2,  # Quality, reliability, and consistency
+        aiu:BG_4_3,  # Internal controls, procedures, and performance management
+        aiu:BG_8_1,  # Technology and data alignment
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText "Anomaly detection model designed to identify potentially erroneous data loads in TCR data. Uses an isolation forest model with and automatically runs daily. Model provides an anomaly score on the full day of data for a single exchange"^^xsd:string .
+
+aiu:plan_2024_DHS_10 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_4_1,  # Process efficiency and waste reduction
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText """DHS employees are permitted to use commercially available generative AI for text generation in day-to-day work. Commonly referred to as AI Chatbots, these tools are able to dynamically create written content through text prompts submitted by the user. They use Natural Language Processing (NLP) and Large Language Models (LLM) to produce natural sounding language in a wide variety of contexts and styles.
+
+Approved applications of commercial Gen AI tools to DHS business include generating first drafts of documents that a human would subsequently review, conducting and synthesizing research on open-source information, and developing briefing materials or preparing for meetings and events. Outputs may include writing, answers to question, and search results, depending on inputs from the user."""^^xsd:string .
+
+aiu:plan_2024_DHS_2 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_4_1,  # Process efficiency and waste reduction
+        aiu:BG_7_1,  # Regulatory and legal compliance
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText "CBP uses this tool to conduct targeted queries to aid CBP in open source research to monitor potential threats or dangers or identify travelers who may be subject to further inspection for violation of laws CBP is authorized to enforce or administer. Babel utilizes AI modules for Text detection and translation as well as object and image recognition to provide analysts with possible matches to manually review in a single interface versus doing multiple manual queries. The output is not singly used for action or decision making and are used to identify additional Open Source or Social Media of a person or identify additional selectors (such as phone and emails) that are previously unknown to CBP and compared by an analyst against Government systems to identify additional derogatory information. These factors can often eliminate the traveler from additional screening."^^xsd:string .
+
+aiu:plan_2024_DHS_3 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_10_1,  # Product safety, data protection, and incident prevention
+        aiu:BG_2_4,  # Customer experience, satisfaction, and retention
+        aiu:BG_4_1,  # Process efficiency and waste reduction
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText "The purpose of this use case is to improve upon Automated Target Recognition (ATR) algorithms used to reduce privacy concerns because a TSO is no longer required to view Advanced Imaging Technology (AIT) images. The expected benefits are to increase detection, reduce false alarms, and improve efficiency and passenger experience. The system reproduces the threat location, which is viewed as a bounding box on a representative human figure, for TSO resolution."^^xsd:string .
+
+aiu:plan_2024_DOC_11 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_1_2,  # Strategic fit, market choices, and portfolio moves
+        aiu:BG_2_2,  # Market understanding, demand estimation, and segmentation
+        aiu:BG_4_1,  # Process efficiency and waste reduction
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText """Accelerate and streamline report production.
+Enable analysts to focus on higher-level, strategic tasks rather than repetitive reporting.
+Reduce costs and improve efficiency, leading to better client service and faster decision-making. Generate initial drafts of market research reports incorporating public data sources
+Provide data-driven insights to identify top markets and recommend strategic directions
+Integrate with existing workflows, supporting analysts in refining and finalizing comprehensive, actionable reports"""^^xsd:string .
+
+aiu:plan_2024_DOC_12 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_2_4,  # Customer experience, satisfaction, and retention
+        aiu:BG_4_1,  # Process efficiency and waste reduction
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText """ITAs Global Business Navigator ChatbotBeta uses artificial intelligence (AI) to answer your questions on the exporting process and the resources available for exporters. Deliver concise, accurate responses to frequently asked export questions
+Guide users to relevant resources within Export Solutions content
+Refer more complex inquiries to trade specialists for personalized support
+Provide multilingual assistance, broadening accessibility to diverse user groups"""^^xsd:string .
+
+aiu:plan_2024_DOC_13 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_3_2,  # Quality, reliability, and consistency
+        aiu:BG_4_1,  # Process efficiency and waste reduction
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText "Improving the quality of written communications, idea generation, refine tone and style. Grammar, punctuation, style improvements, content generation"^^xsd:string .
+
+aiu:plan_2024_DOC_14 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_2_4,  # Customer experience, satisfaction, and retention
+        aiu:BG_3_2,  # Quality, reliability, and consistency
+        aiu:BG_4_4,  # Scaling operations without degrading quality or CX
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText """The purpose of the FAQ search tool is to find the correct Census Bureau-provided answers to common questions from the public about the 2025 Census Test. The 2025 Census Test is a proposed test as part of the Small-Scale Response Test (SmaRT) program in decennial. The purpose of this program is to perform experiments using different methods to improve self-response rates and data collection. The SmaRT program accomplishes this using iterative tests with relatively small sample sizes. Four installments of the SmaRT program were fielded before the 2020 Census. Three small-scale tests have occurred so far this decade with the fourth test planned for 2025. There is an online questionnaire for each of the tests, with a census.gov landing page to access the online questionnaire. In the first three tests this decade, there were approximately 15 FAQs on the landing page that the user could read. For the 2025 Census Test, we would like to offer over 50 FAQs to answer the publics questions via a search tool.
+Current public-facing search tools at the Census Bureau use exact match only. Depending on what users type to search, the correct FAQ might not appear because users do not always use the same terminology as the Census Bureau. This FAQ search tool built with machine-learning models will use semantic similarity (i.e., synonyms or misspellings) to find the correct answers. The answers it provides back to the public are census-approved answers, and not generative AI answers. If the 2025 Census Test is approved, this search feature will be on the landing page for the survey. Implementing this search tool is considered a proof-of-concept for the use of such a search feature. If it is successful, the search tool could be used in the 2026 Census Test on its landing page, or the 2028 Dress Rehearsal. Ultimately, if it is successful, the public will benefit by finding answers to common questions more easily and more accurately. Description of what the AI system outputs, whether its a prediction, recommendation, decision, etc.
+Utilizing transfer learning from Large Language Models (LLMs) we utilize them to encode our Census approved FAQs to then compare to a user query. This user query is then encoded as an embedding from the same LLM model and then we take a distance calculation using cosine similarity to rank our reference materials. We then showcase the top 3 results depending if a threshold is met of .25 cosine similarity or above. It is a semantic search tool that ranks reference material."""^^xsd:string .
+
+aiu:plan_2024_VA_0 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_4_1,  # Process efficiency and waste reduction
+        aiu:BG_4_4,  # Scaling operations without degrading quality or CX
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText "Intake of VA Claims materials as well as other Veteran, VSO, and stakeholder submissions results in contentions which are prescribed as eligible.  The platform ingests and takes initial actions on claims and contentions (largely those impacted by the PACT Act) which include medical record retrieval, review of the VBMS eFolder, generates a summary review document, drafting or submitting contract examination requests via robotics process automation (RPA), and/or changing the claim status to Ready For Decision (RFD). Utilizing prescribed machine learning and Natural Language Processing (NLP), ADS utilizes Intelligent Form Recognition (IFR), Optical Character Recognition (OCR), Intelligent Character Recognition (ICR), and NLP to extract an average of 95 fields on over 1500 form layouts within VAs purview.  The system generates a summary review document, drafting or submitting contract examination requests via robotics process automation (RPA), and/or changing the claim status to Ready For Decision (RFD)."^^xsd:string .
+
+aiu:plan_2024_VA_1 a aiu:AIUseCasePlan ;
+    aiu:hasBusinessGoal aiu:BG_10_1,  # Product safety, data protection, and incident prevention
+        aiu:BG_3_2,  # Quality, reliability, and consistency
+        aiu:BG_4_1,  # Process efficiency and waste reduction
+        aiu:BG_8_3 ;  # Automation and AI enablement
+    aiu:purposeBenefitsText "To be used to personalize screening regime, calling high risk patients earlier to catch cancers in the early stages and potentially reducing screening burden for low risk patients. It takes as input a lung low-dose CT scan, and produces a JSON return object with predictions of the odds of developing cancer within the next 6 years (one prediction for each year)."^^xsd:string .
+
+aiu:proc_2024_CFPB_4 a aiu:AIUseCaseProcess ;
+    aiu:hasDevelopmentStage aiu:DS_Initiated ;
+    aiu:hasImpactType aiu:IT_Neither ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText "Key documents"^^xsd:string .
+
+aiu:proc_2024_CFPB_5 a aiu:AIUseCaseProcess ;
+    aiu:hasDevelopmentStage aiu:DS_Initiated ;
+    aiu:hasImpactType aiu:IT_Neither ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText "Brief narrative summaries describing concepts included in complaint narratives."^^xsd:string .
+
+aiu:proc_2024_CFTC_6 a aiu:AIUseCaseProcess ;
+    aiu:customCodePresent true ;
+    aiu:hasAcqDevTime aiu:ti_proc_2024_CFTC_6_acq ;
+    aiu:hasAppealProcess false ;
+    aiu:hasCodeAccess aiu:CA_PrivateSource ;
+    aiu:hasDataDocLevel aiu:DDL_Complete ;
+    aiu:hasDevelopmentMethod aiu:DM_Both ;
+    aiu:hasDevelopmentStage aiu:DS_Retired ;
+    aiu:hasImpactType aiu:IT_Both ;
+    aiu:hasImplementationTime aiu:ti_proc_2024_CFTC_6_impl ;
+    aiu:hasInitiationTime aiu:ti_proc_2024_CFTC_6_init ;
+    aiu:hasInternalReviewLevel aiu:IR_Limited ;
+    aiu:hasOptOut false ;
+    aiu:hasRetirementTime aiu:ti_proc_2024_CFTC_6_ret ;
+    aiu:hasTestingLevel aiu:TL_PerfOps ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText "Model provides probability of spoofing behavior for every individual trader in a specified market on a specified day"^^xsd:string ;
+    aiu:saopReviewed true ;
+    aiu:usesPII false .
+
+aiu:proc_2024_CFTC_7 a aiu:AIUseCaseProcess ;
+    aiu:hasAcqDevTime aiu:ti_proc_2024_CFTC_7_acq ;
+    aiu:hasDevelopmentMethod aiu:DM_Both ;
+    aiu:hasDevelopmentStage aiu:DS_AcqDev ;
+    aiu:hasImpactType aiu:IT_Neither ;
+    aiu:hasInitiationTime aiu:ti_proc_2024_CFTC_7_init ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText "The AI generates predicted price movements based on provided input probabilities"^^xsd:string ;
+    aiu:saopReviewed false ;
+    aiu:usesPII true .
+
+aiu:proc_2024_CFTC_8 a aiu:AIUseCaseProcess ;
+    aiu:hasDevelopmentMethod aiu:DM_InHouse ;
+    aiu:hasDevelopmentStage aiu:DS_Initiated ;
+    aiu:hasImpactType aiu:IT_Neither ;
+    aiu:hasInitiationTime aiu:ti_proc_2024_CFTC_8_init ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText "Now-cast score for each registrant and each day indicating probability or risk category for near-future capital adjustment indicator statisitc"^^xsd:string ;
+    aiu:saopReviewed false ;
+    aiu:usesPII true .
+
+aiu:proc_2024_CFTC_9 a aiu:AIUseCaseProcess ;
+    aiu:customCodePresent true ;
+    aiu:hasAcqDevTime aiu:ti_proc_2024_CFTC_9_acq ;
+    aiu:hasCodeAccess aiu:CA_PrivateSource ;
+    aiu:hasDataDocLevel aiu:DDL_Complete ;
+    aiu:hasDevelopmentMethod aiu:DM_Both ;
+    aiu:hasDevelopmentStage aiu:DS_OpsMaint ;
+    aiu:hasImpactType aiu:IT_Neither ;
+    aiu:hasImplementationTime aiu:ti_proc_2024_CFTC_9_impl ;
+    aiu:hasInitiationTime aiu:ti_proc_2024_CFTC_9_init ;
+    aiu:hasInternalReviewLevel aiu:IR_Limited ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText "Model provides an anomaly score on the full day of data for a single exchange"^^xsd:string ;
+    aiu:saopReviewed true ;
+    aiu:usesPII false .
+
+aiu:proc_2024_DHS_10 a aiu:AIUseCaseProcess ;
+    aiu:hasDevelopmentStage aiu:DS_OpsMaint ;
+    aiu:hasImpactType aiu:IT_Neither ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText "Outputs may include writing, answers to question, and search results, depending on inputs from the user."^^xsd:string .
+
+aiu:proc_2024_DHS_2 a aiu:AIUseCaseProcess ;
+    aiu:customCodePresent true ;
+    aiu:hasAcqDevTime aiu:ti_proc_2024_DHS_2_acq ;
+    aiu:hasCodeAccess aiu:CA_NoAccess ;
+    aiu:hasDevelopmentMethod aiu:DM_Contracting ;
+    aiu:hasDevelopmentStage aiu:DS_ImplAssess ;
+    aiu:hasImpactType aiu:IT_Rights ;
+    aiu:hasInitiationTime aiu:ti_proc_2024_DHS_2_init ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText "Babel utilizes AI modules for Text detection and translation as well as object and image recognition to provide analysts with possible matches to manually review in a single interface versus doing multiple manual queries. The output is not singly used for action or decision making and are used to identify additional Open Source or Social Media of a person or identify additional selectors (such as phone and emails) that are previously unknown to CBP and compared by an analyst against Government systems to identify additional derogatory information. These factors can often eliminate the traveler from additional screening."^^xsd:string ;
+    aiu:saopReviewed true ;
+    aiu:usesPII true .
+
+aiu:proc_2024_DHS_3 a aiu:AIUseCaseProcess ;
+    aiu:hasAcqDevTime aiu:ti_proc_2024_DHS_3_acq ;
+    aiu:hasDataDocLevel aiu:DDL_Partial ;
+    aiu:hasDevelopmentMethod aiu:DM_Contracting ;
+    aiu:hasDevelopmentStage aiu:DS_AcqDev ;
+    aiu:hasImpactType aiu:IT_Both ;
+    aiu:hasInitiationTime aiu:ti_proc_2024_DHS_3_init ;
+    aiu:hasInternalReviewLevel aiu:IR_NoDocs ;
+    aiu:hasTopicArea aiu:TA_Transportation ;
+    aiu:outputsText "The system reproduces the threat location, which is viewed as a bounding box on a representative human figure, for TSO resolution."^^xsd:string .
+
+aiu:proc_2024_DOC_11 a aiu:AIUseCaseProcess ;
+    aiu:hasDevelopmentStage aiu:DS_AcqDev ;
+    aiu:hasImpactType aiu:IT_Neither ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText """Generate initial drafts of market research reports incorporating public data sources
+Provide data-driven insights to identify top markets and recommend strategic directions
+Integrate with existing workflows, supporting analysts in refining and finalizing comprehensive, actionable reports"""^^xsd:string .
+
+aiu:proc_2024_DOC_12 a aiu:AIUseCaseProcess ;
+    aiu:hasDevelopmentStage aiu:DS_ImplAssess ;
+    aiu:hasImpactType aiu:IT_Neither ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText """Deliver concise, accurate responses to frequently asked export questions
+Guide users to relevant resources within Export Solutions content
+Refer more complex inquiries to trade specialists for personalized support
+Provide multilingual assistance, broadening accessibility to diverse user groups"""^^xsd:string .
+
+aiu:proc_2024_DOC_13 a aiu:AIUseCaseProcess ;
+    aiu:hasDevelopmentStage aiu:DS_OpsMaint ;
+    aiu:hasImpactType aiu:IT_Neither ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText "Grammar, punctuation, style improvements, content generation"^^xsd:string .
+
+aiu:proc_2024_DOC_14 a aiu:AIUseCaseProcess ;
+    aiu:hasDevelopmentStage aiu:DS_AcqDev ;
+    aiu:hasImpactType aiu:IT_Neither ;
+    aiu:hasTopicArea aiu:TA_GovServices ;
+    aiu:outputsText """Description of what the AI system outputs, whether its a prediction, recommendation, decision, etc.
+Utilizing transfer learning from Large Language Models (LLMs) we utilize them to encode our Census approved FAQs to then compare to a user query. This user query is then encoded as an embedding from the same LLM model and then we take a distance calculation using cosine similarity to rank our reference materials. We then showcase the top 3 results depending if a threshold is met of .25 cosine similarity or above. It is a semantic search tool that ranks reference material."""^^xsd:string .
+
+aiu:proc_2024_VA_0 a aiu:AIUseCaseProcess ;
+    aiu:customCodePresent true ;
+    aiu:hasAcqDevTime aiu:ti_proc_2024_VA_0_acq ;
+    aiu:hasCodeAccess aiu:CA_PrivateSource ;
+    aiu:hasDataDocLevel aiu:DDL_Partial ;
+    aiu:hasDevelopmentMethod aiu:DM_Both ;
+    aiu:hasDevelopmentStage aiu:DS_OpsMaint ;
+    aiu:hasImpactType aiu:IT_Both ;
+    aiu:hasImplementationTime aiu:ti_proc_2024_VA_0_impl ;
+    aiu:hasInitiationTime aiu:ti_proc_2024_VA_0_init ;
+    aiu:hasInternalReviewLevel aiu:IR_Published ;
+    aiu:hasTopicArea aiu:TA_GovServices ;
+    aiu:outputsText "Utilizing prescribed machine learning and Natural Language Processing (NLP), ADS utilizes Intelligent Form Recognition (IFR), Optical Character Recognition (OCR), Intelligent Character Recognition (ICR), and NLP to extract an average of 95 fields on over 1500 form layouts within VAs purview.  The system generates a summary review document, drafting or submitting contract examination requests via robotics process automation (RPA), and/or changing the claim status to Ready For Decision (RFD)."^^xsd:string ;
+    aiu:saopReviewed true ;
+    aiu:supportsHISP aiu:HISP_VBA ;
+    aiu:usesPII true .
+
+aiu:proc_2024_VA_1 a aiu:AIUseCaseProcess ;
+    aiu:customCodePresent true ;
+    aiu:hasAcqDevTime aiu:ti_proc_2024_VA_1_acq ;
+    aiu:hasCodeAccess aiu:CA_PublicSource ;
+    aiu:hasDataDocLevel aiu:DDL_Complete ;
+    aiu:hasDevelopmentMethod aiu:DM_InHouse ;
+    aiu:hasDevelopmentStage aiu:DS_AcqDev ;
+    aiu:hasImpactType aiu:IT_Both ;
+    aiu:hasInitiationTime aiu:ti_proc_2024_VA_1_init ;
+    aiu:hasInternalReviewLevel aiu:IR_Published ;
+    aiu:hasTopicArea aiu:TA_MissionEnabling ;
+    aiu:outputsText "It takes as input a lung low-dose CT scan, and produces a JSON return object with predictions of the odds of developing cancer within the next 6 years (one prediction for each year)."^^xsd:string ;
+    aiu:saopReviewed false ;
+    aiu:supportsHISP aiu:HISP_VHA ;
+    aiu:usesPII true .
+
+aiu:ti_proc_2024_CFTC_6_acq a aiu:TimeInstant .
+
+aiu:ti_proc_2024_CFTC_6_impl a aiu:TimeInstant .
+
+aiu:ti_proc_2024_CFTC_6_init a aiu:TimeInstant .
+
+aiu:ti_proc_2024_CFTC_6_ret a aiu:TimeInstant .
+
+aiu:ti_proc_2024_CFTC_7_acq a aiu:TimeInstant .
+
+aiu:ti_proc_2024_CFTC_7_init a aiu:TimeInstant .
+
+aiu:ti_proc_2024_CFTC_8_init a aiu:TimeInstant .
+
+aiu:ti_proc_2024_CFTC_9_acq a aiu:TimeInstant .
+
+aiu:ti_proc_2024_CFTC_9_impl a aiu:TimeInstant .
+
+aiu:ti_proc_2024_CFTC_9_init a aiu:TimeInstant .
+
+aiu:ti_proc_2024_DHS_2_acq a aiu:TimeInstant .
+
+aiu:ti_proc_2024_DHS_2_init a aiu:TimeInstant .
+
+aiu:ti_proc_2024_DHS_3_acq a aiu:TimeInstant .
+
+aiu:ti_proc_2024_DHS_3_init a aiu:TimeInstant .
+
+aiu:ti_proc_2024_VA_0_acq a aiu:TimeInstant .
+
+aiu:ti_proc_2024_VA_0_impl a aiu:TimeInstant .
+
+aiu:ti_proc_2024_VA_0_init a aiu:TimeInstant .
+
+aiu:ti_proc_2024_VA_1_acq a aiu:TimeInstant .
+
+aiu:ti_proc_2024_VA_1_init a aiu:TimeInstant .
+
+aiu:agency_CFPB a aiu:Agency ;
+    rdfs:label "Consumer Financial Protection Bureau"^^xsd:string .
+
+aiu:agency_VA a aiu:Agency ;
+    rdfs:label "Department of Veterans Affairs"^^xsd:string .
+
+aiu:bureau_CFPB a aiu:Bureau ;
+    rdfs:label "CFPB"^^xsd:string .
+
+aiu:bureau_ITA_International_Trade_A a aiu:Bureau ;
+    rdfs:label "ITA - International Trade Administration"^^xsd:string .
+
+aiu:agency_DHS a aiu:Agency ;
+    rdfs:label "Department of Homeland Security"^^xsd:string .
+
+aiu:agency_CFTC a aiu:Agency ;
+    rdfs:label "Commodity Futures Trading Commission"^^xsd:string .
+
+aiu:agency_DOC a aiu:Agency ;
+    rdfs:label "Department of Commerce"^^xsd:string .
+
+aiu:inv2024 a aiu:InventorySnapshot ;
+    aiu:inventoryYear "2024"^^xsd:gYear .
+

@@ -13,3 +13,4 @@ release/
 .DS_Store
 */.DS_Store
 /.vscode
+2_ETL/__pycache__/etl.cpython-312.pyc
