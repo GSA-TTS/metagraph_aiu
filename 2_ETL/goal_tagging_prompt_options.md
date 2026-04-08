@@ -68,7 +68,7 @@ Extract the `GOALS:` line from the response and parse the JSON from it.
 ### Parameters
 
 - `max_tokens`: ~1500 (38 evaluation lines × ~15 tokens + themes + JSON)
-- Calls per record: 3 (Sonnet + GPT + Opus if disagreement) — same as current
+- Calls per record: 2 (Sonnet + GPT in parallel; intersection used on disagreement — no Opus referee)
 
 ### Trade-offs
 
@@ -197,7 +197,7 @@ GOALS: {"goals": [...]}
 ### Parameters
 
 - `max_tokens`: Call 1 ~128, Call 2 ~1024
-- Calls per record: 5 (2× Sonnet + 2× GPT + Opus if disagreement)
+- Calls per record: 4 (2× Sonnet + 2× GPT in parallel; intersection used on disagreement — no Opus referee)
 
 ### Trade-offs
 
