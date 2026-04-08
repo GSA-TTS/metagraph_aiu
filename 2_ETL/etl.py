@@ -36,6 +36,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 import anthropic
 import openai
 import pandas as pd
@@ -64,9 +67,38 @@ _parser.add_argument(
     help="Exact number of rows to sample at random (random_state=42); "
     "overrides --case when provided.",
 )
+_parser.add_argument(
+    "--resume",
+    type=str,
+    default=None,
+    metavar="CHECKPOINT",
+    help="Resume from a checkpoint file produced by a previous run.",
+)
+_parser.add_argument(
+    "--concurrent",
+    type=int,
+    default=5,
+    metavar="N",
+    help="Number of rows to process concurrently (default: 5).",
+)
+_parser.add_argument(
+    "--checkpoint-interval",
+    type=int,
+    default=50,
+    metavar="N",
+    help="Write checkpoint + flush logs every N completed rows (default: 50).",
+)
+_parser.add_argument(
+    "--no-validate",
+    action="store_true",
+    help="Skip SHACL validation (useful for large full runs).",
+)
 _args = _parser.parse_args()
 CASE: str = _args.case
 N_ROWS: int | None = _args.n
+CONCURRENT_ROWS: int = max(1, _args.concurrent)
+CHECKPOINT_INTERVAL: int = max(1, _args.checkpoint_interval)
+NO_VALIDATE: bool = _args.no_validate
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 _HERE = Path(__file__).resolve().parent          # metagraph_aiu/2_ETL/
@@ -92,6 +124,25 @@ elif CASE == "mid":
 else:
     OUT_PATH = _HERE / f"full_2024_{_TS}.ttl"
     DISAGREE_PATH = _HERE / f"disagreements_{CASE}_{_TS}.jsonl"
+
+CHECKPOINT_PATH = OUT_PATH.with_suffix(".checkpoint.jsonl")
+
+# ── Resume: load checkpoint and restore paths ──────────────────────────────────
+_resume_results: dict[int, dict[str, Any]] = {}
+if _args.resume:
+    _chk = Path(_args.resume)
+    with _chk.open(encoding="utf-8") as _fh:
+        for _line in _fh:
+            _entry = json.loads(_line)
+            if _entry.get("type") == "meta":
+                OUT_PATH = Path(_entry["out_path"])
+                DISAGREE_PATH = Path(_entry["disagree_path"])
+                CHECKPOINT_PATH = _chk
+            elif _entry.get("type") == "row":
+                _resume_results[_entry["row_idx"]] = {
+                    k: v for k, v in _entry.items() if k not in ("type", "row_idx")
+                }
+    print(f"Resuming from: {_chk}  ({len(_resume_results)} rows already completed)")
 
 # ── RDF namespaces ─────────────────────────────────────────────────────────────
 AIU = Namespace("https://example.org/ai-usecase-ontology#")
@@ -997,20 +1048,54 @@ def _tag_opus_referee(
     return goals, chosen
 
 
+_disagree_buffer: list[dict[str, Any]] = []
+
+
 def _log_disagreement(use_case_name: str, result: dict[str, Any]) -> None:
-    """Append one disagreement record (disagreement_pct > 30) to the JSONL log."""
+    """Buffer one disagreement record (disagreement_pct > 30) for batch flushing."""
     intersection = sorted(set(result["sonnet"]) & set(result["gpt"]))
-    entry = {
+    _disagree_buffer.append({
         "use_case_name": use_case_name,
         "sonnet_goals": result["sonnet"],
         "gpt_goals": result["gpt"],
         "intersection_goals": intersection,
         "final_goals": result["goals"],
         "disagreement_pct": result["disagreement_pct"],
-        "prompt": result["prompt"],
-    }
-    with DISAGREE_PATH.open("a", encoding="utf-8") as fh:
-        fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        "prompt": result["prompt"].split("\nBusiness Goal Catalog")[0],
+    })
+
+
+def _flush_disagree_buffer() -> None:
+    """Write buffered disagreement records to JSONL and clear the buffer."""
+    if _disagree_buffer:
+        with DISAGREE_PATH.open("a", encoding="utf-8") as fh:
+            for entry in _disagree_buffer:
+                fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        _disagree_buffer.clear()
+
+
+def _write_checkpoint(completed: dict[int, dict[str, Any]]) -> None:
+    """Overwrite checkpoint file with metadata + all completed row results."""
+    with CHECKPOINT_PATH.open("w", encoding="utf-8") as fh:
+        meta = {
+            "type": "meta",
+            "out_path": str(OUT_PATH),
+            "disagree_path": str(DISAGREE_PATH),
+            "case": CASE,
+            "rows_done": len(completed),
+        }
+        fh.write(json.dumps(meta) + "\n")
+        for idx, res in sorted(completed.items()):
+            row_entry = {
+                "type": "row",
+                "row_idx": idx,
+                "goals": res["goals"],
+                "agreed": res["agreed"],
+                "sonnet": res["sonnet"],
+                "gpt": res["gpt"],
+                "disagreement_pct": res["disagreement_pct"],
+            }
+            fh.write(json.dumps(row_entry) + "\n")
 
 
 def tag_goals_dual(
@@ -1029,8 +1114,11 @@ def tag_goals_dual(
       prompt          -- the full prompt string sent to both models
     """
     prompt = _build_goal_prompt(name, purpose, outputs, topic, stage)
-    sonnet_goals = _tag_sonnet(prompt)
-    gpt_goals = _tag_gpt(prompt)
+    with ThreadPoolExecutor(max_workers=2) as _ex:
+        _fs = _ex.submit(_tag_sonnet, prompt)
+        _fg = _ex.submit(_tag_gpt, prompt)
+        sonnet_goals = _fs.result()
+        gpt_goals = _fg.result()
 
     s_set = set(sonnet_goals)
     g_set = set(gpt_goals)
@@ -1064,56 +1152,95 @@ def tag_goals_dual(
 
 
 # ── Per-use-case tagging loop ──────────────────────────────────────────────────
-goal_results: dict[int, dict[str, Any]] = {}
-total_disagreed = 0   # any Sonnet != GPT
-logged_count = 0      # disagreement_pct > 30 (written to JSONL)
+goal_results: dict[int, dict[str, Any]] = dict(_resume_results)
+total_disagreed = 0
+logged_count = 0
+
+# Replay resumed rows into graph so triple counts are correct
+for _i, _res in sorted(goal_results.items()):
+    for _gid in _res["goals"]:
+        kg.add((plan_iris[_i], AIU["hasBusinessGoal"], AIU[_gid.replace("aiu:", "")]))
+    if not _res["agreed"]:
+        total_disagreed += 1
 
 print(
-    f"\n{'#':>2}  {'Use Case Name':>35}  "
-    f"{'Goals':>5}  {'Dis%':>5}  {'TTL source':>12}  Top goal"
+    f"\n{'#':>4}  {'Use Case Name':>35}  "
+    f"{'Goals':>5}  {'Dis%':>5}  {'TTL source':>10}  Top goal"
 )
 print("-" * 88)
 
-for i in range(len(work_df)):
-    r = work_df.iloc[i]
-    result = tag_goals_dual(
-        name=nstr(r[col("name")]),
-        purpose=nstr(r[col("purpose")]),
-        outputs=nstr(r[col("outputs")]),
-        topic=nstr(r[col("topic_area")]),
-        stage=nstr(r[col("dev_stage")]),
-    )
-    goal_results[i] = result
-    # result["goals"] is the intersection on disagreement, or agreed Sonnet set.
-    final_goals = result["goals"]
-    agreed = result["agreed"]
-    dis_pct = result["disagreement_pct"]
+_run_start = time.time()
 
-    if not agreed:
-        total_disagreed += 1
-        if dis_pct > 30:
-            logged_count += 1
-            _log_disagreement(nstr(r[col("name")]), result)
+for _batch_start in range(0, len(work_df), CONCURRENT_ROWS):
+    _batch_indices = [
+        i for i in range(_batch_start, min(_batch_start + CONCURRENT_ROWS, len(work_df)))
+        if i not in goal_results
+    ]
+    if not _batch_indices:
+        continue
 
-    # Determine TTL source label for the console summary
-    if agreed:
-        ttl_src = "Sonnet"
-    else:
-        intersection = set(result["sonnet"]) & set(result["gpt"])
-        ttl_src = "Intersect" if intersection else "Union"
+    # Concurrent LLM calls for batch rows
+    with ThreadPoolExecutor(max_workers=len(_batch_indices)) as _pool:
+        _fmap = {
+            _pool.submit(
+                tag_goals_dual,
+                name=nstr(work_df.iloc[i][col("name")]),
+                purpose=nstr(work_df.iloc[i][col("purpose")]),
+                outputs=nstr(work_df.iloc[i][col("outputs")]),
+                topic=nstr(work_df.iloc[i][col("topic_area")]),
+                stage=nstr(work_df.iloc[i][col("dev_stage")]),
+            ): i
+            for i in _batch_indices
+        }
+        _batch_results: dict[int, dict[str, Any]] = {}
+        for _future in as_completed(_fmap):
+            _batch_results[_fmap[_future]] = _future.result()
 
-    top = final_goals[0] if final_goals else "none"
-    print(
-        f"{i:>2}  {nstr(r[col('name')]):>35.35}  "
-        f"{len(final_goals):>5}  "
-        f"{dis_pct:>4.0f}%  "
-        f"{ttl_src:>12}  {top}"
-    )
+    # Sequential: write to graph, print, buffer logs — in row order
+    for i in sorted(_batch_results):
+        result = _batch_results[i]
+        goal_results[i] = result
+        final_goals = result["goals"]
+        agreed = result["agreed"]
+        dis_pct = result["disagreement_pct"]
 
-    # Write referee/agreed goals to graph — this is the single source of truth
-    # for what ends up in the TTL file.
-    for gid in final_goals:
-        kg.add((plan_iris[i], AIU["hasBusinessGoal"], AIU[gid.replace("aiu:", "")]))
+        if not agreed:
+            total_disagreed += 1
+            if dis_pct > 30:
+                logged_count += 1
+                _log_disagreement(nstr(work_df.iloc[i][col("name")]), result)
+
+        ttl_src = "Sonnet" if agreed else (
+            "Intersect" if set(result["sonnet"]) & set(result["gpt"]) else "Union"
+        )
+
+        for gid in final_goals:
+            kg.add((plan_iris[i], AIU["hasBusinessGoal"], AIU[gid.replace("aiu:", "")]))
+
+        rows_done = len(goal_results)
+        elapsed = time.time() - _run_start
+        eta_str = ""
+        if rows_done > 0 and rows_done < len(work_df):
+            eta_secs = (elapsed / rows_done) * (len(work_df) - rows_done)
+            eta_str = f"  ETA ~{int(eta_secs // 60)}m{int(eta_secs % 60):02d}s"
+
+        top = final_goals[0] if final_goals else "none"
+        print(
+            f"{i:>4}  {nstr(work_df.iloc[i][col('name')]):>35.35}  "
+            f"{len(final_goals):>5}  {dis_pct:>4.0f}%  {ttl_src:>10}  {top}"
+            f"{eta_str}"
+        )
+
+    # Checkpoint + flush every CHECKPOINT_INTERVAL completed rows
+    _rows_done = len(goal_results)
+    if _rows_done % CHECKPOINT_INTERVAL < CONCURRENT_ROWS or _rows_done >= len(work_df):
+        _flush_disagree_buffer()
+        kg.serialize(destination=str(OUT_PATH), format="turtle")
+        _write_checkpoint(goal_results)
+        print(f"  [checkpoint @ {_rows_done}/{len(work_df)} rows]")
+
+# Final flush for any remaining buffered disagreements
+_flush_disagree_buffer()
 
 _llm_tagged_triples = len(kg) - _triples_before_tagging
 print(f"\nTotal triples after goal tagging: {len(kg)}")
@@ -1158,65 +1285,70 @@ print("\n" + "=" * 70)
 print("STEP 5 — SHACL validation")
 print("=" * 70)
 
-ont_g = Graph()
-ont_g.parse(str(ONT_PATH), format="turtle")
-data_g = Graph()
-data_g.parse(str(OUT_PATH), format="turtle")
-
-conforms, results_g, _ = pyshacl.validate(
-    data_g,
-    shacl_graph=str(SHACL_PATH),
-    ont_graph=ont_g,
-    inference="none",
-    allow_warnings=True,
-    abort_on_first=False,
-    meta_shacl=False,
-    advanced=True,
-)
-
-viols: list[tuple[str, str]] = []
-warns: list[tuple[str, str]] = []
-for vr in results_g.subjects(RDF.type, SH["ValidationResult"]):
-    sev = results_g.value(vr, SH["resultSeverity"])
-    msg = results_g.value(vr, SH["resultMessage"])
-    src = results_g.value(vr, SH["sourceShape"])
-    focus = results_g.value(vr, SH["focusNode"])
-    path = results_g.value(vr, SH["resultPath"])
-    src_l = str(src).split("#")[-1] if src else "?"
-    focus_l = str(focus).split("#")[-1] if focus else "?"
-    path_l = str(path).split("#")[-1] if path else "(SPARQL)"
-    entry = f"  [{src_l}] focus={focus_l}, path={path_l}: {str(msg)[:120]}"
-    if sev == SH["Violation"]:
-        viols.append((focus_l, entry))
-    else:
-        warns.append((focus_l, entry))
-
-print(
-    f"\nConforms: {conforms}  |  Violations: {len(viols)}  |  "
-    f"Warnings: {len(warns)}"
-)
-
-record_viols: dict[str, list[str]] = {}
-for focus_l, entry in viols:
-    record_viols.setdefault(focus_l, []).append(entry)
-
-if viols:
-    print("\nViolations by record:")
-    for rec, entries in sorted(record_viols.items()):
-        print(f"  {rec}: {len(entries)} violation(s)")
-        for e in entries[:3]:
-            print(e)
-        if len(entries) > 3:
-            print(f"    ... {len(entries) - 3} more")
+if NO_VALIDATE:
+    print("  Skipped (--no-validate)")
+    conforms, viols, warns = True, [], []
+    record_viols: dict[str, list[str]] = {}
 else:
-    print("  No violations -- all records conform.")
+    ont_g = Graph()
+    ont_g.parse(str(ONT_PATH), format="turtle")
+    data_g = Graph()
+    data_g.parse(str(OUT_PATH), format="turtle")
 
-if warns:
-    print(f"\nWarnings ({len(warns)} total):")
-    for _, e in warns[:5]:
-        print(e)
-    if len(warns) > 5:
-        print(f"  ... {len(warns) - 5} more (PROV pipeline warnings expected)")
+    conforms, results_g, _ = pyshacl.validate(
+        data_g,
+        shacl_graph=str(SHACL_PATH),
+        ont_graph=ont_g,
+        inference="none",
+        allow_warnings=True,
+        abort_on_first=False,
+        meta_shacl=False,
+        advanced=True,
+    )
+
+    viols: list[tuple[str, str]] = []
+    warns: list[tuple[str, str]] = []
+    for vr in results_g.subjects(RDF.type, SH["ValidationResult"]):
+        sev = results_g.value(vr, SH["resultSeverity"])
+        msg = results_g.value(vr, SH["resultMessage"])
+        src = results_g.value(vr, SH["sourceShape"])
+        focus = results_g.value(vr, SH["focusNode"])
+        path = results_g.value(vr, SH["resultPath"])
+        src_l = str(src).split("#")[-1] if src else "?"
+        focus_l = str(focus).split("#")[-1] if focus else "?"
+        path_l = str(path).split("#")[-1] if path else "(SPARQL)"
+        entry = f"  [{src_l}] focus={focus_l}, path={path_l}: {str(msg)[:120]}"
+        if sev == SH["Violation"]:
+            viols.append((focus_l, entry))
+        else:
+            warns.append((focus_l, entry))
+
+    print(
+        f"\nConforms: {conforms}  |  Violations: {len(viols)}  |  "
+        f"Warnings: {len(warns)}"
+    )
+
+    record_viols: dict[str, list[str]] = {}
+    for focus_l, entry in viols:
+        record_viols.setdefault(focus_l, []).append(entry)
+
+    if viols:
+        print("\nViolations by record:")
+        for rec, entries in sorted(record_viols.items()):
+            print(f"  {rec}: {len(entries)} violation(s)")
+            for e in entries[:3]:
+                print(e)
+            if len(entries) > 3:
+                print(f"    ... {len(entries) - 3} more")
+    else:
+        print("  No violations -- all records conform.")
+
+    if warns:
+        print(f"\nWarnings ({len(warns)} total):")
+        for _, e in warns[:5]:
+            print(e)
+        if len(warns) > 5:
+            print(f"  ... {len(warns) - 5} more (PROV pipeline warnings expected)")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
