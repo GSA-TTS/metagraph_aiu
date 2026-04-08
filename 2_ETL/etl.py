@@ -138,6 +138,10 @@ if _args.resume:
                 OUT_PATH = Path(_entry["out_path"])
                 DISAGREE_PATH = Path(_entry["disagree_path"])
                 CHECKPOINT_PATH = _chk
+                if "case" in _entry:
+                    CASE = _entry["case"]
+                if "n_rows" in _entry:
+                    N_ROWS = _entry["n_rows"]
             elif _entry.get("type") == "row":
                 _resume_results[_entry["row_idx"]] = {
                     k: v for k, v in _entry.items() if k not in ("type", "row_idx")
@@ -940,6 +944,8 @@ def _tag_sonnet(prompt: str) -> list[str]:
         system=_SYSTEM,
         messages=[{"role": "user", "content": prompt}],
     )
+    if not resp.content:
+        return []
     return _parse_goals(resp.content[0].text.strip())
 
 
@@ -1082,6 +1088,7 @@ def _write_checkpoint(completed: dict[int, dict[str, Any]]) -> None:
             "out_path": str(OUT_PATH),
             "disagree_path": str(DISAGREE_PATH),
             "case": CASE,
+            "n_rows": N_ROWS,
             "rows_done": len(completed),
         }
         fh.write(json.dumps(meta) + "\n")
@@ -1439,7 +1446,7 @@ Rows selected      : {len(work_df)}
   Full+Safety/Both : {_sftb.sum()}
   Full+HISP        : {_hisp.sum()}
   Full+PII         : {_pii.sum()}
-RDF output         : {OUT_PATH}  ({OUT_PATH.stat().st_size // 1024} KB, {len(data_g)} triples)
+RDF output         : {OUT_PATH}  ({OUT_PATH.stat().st_size // 1024} KB, {len(kg)} triples)
 Goal tagging       : Claude Sonnet + GPT-5.4-mini (intersection on disagreement)
   Agreed           : {agreed_count}/{len(work_df)}
   Disagreed        : {total_disagreed}/{len(work_df)} (intersection written to TTL)
@@ -1506,7 +1513,7 @@ _md = f"""# ETL Results — `etl.py --case {CASE}` ({_stem})
 Run date: {datetime.now().strftime('%Y-%m-%d')}
 Script: `etl.py` (Claude Sonnet + GPT-5.4-mini Responses API; intersection on disagreement)
 Source: `inventory_2024.csv` ({len(work_df)} rows selected from 2,133 total)
-Output: `{OUT_PATH.name}` ({OUT_PATH.stat().st_size // 1024} KB, {len(data_g)} triples)
+Output: `{OUT_PATH.name}` ({OUT_PATH.stat().st_size // 1024} KB, {len(kg)} triples)
 Disagreement log: `{DISAGREE_PATH.name if logged_count else "none"}`
 
 ---
@@ -1526,7 +1533,7 @@ Disagreement log: `{DISAGREE_PATH.name if logged_count else "none"}`
 
 | Metric | Value |
 |---|---|
-| Total triples | {len(data_g)} |
+| Total triples | {len(kg)} |
 | Pre-assigned goal triples ({', '.join(GOAL_BLACKLIST)}) | {_lf_preassigned} |
 | LLM-tagged goal triples | {_lf_llm} |
 | Output file size | {OUT_PATH.stat().st_size // 1024} KB |
