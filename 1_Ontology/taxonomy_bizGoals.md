@@ -1,6 +1,6 @@
 # Taxonomy of Business Goals
 
-Each goal cluster includes a **lookup-fields** bullet that maps to fields from the 2024 Federal AI Use Case Inventory `data_dictionary.yaml` (conceptually: “which fields most likely contain this kind of goal signal?”).
+Each goal cluster includes a **hints** bullet that maps to fields from the 2024 Federal AI Use Case Inventory `data_dictionary.yaml` (conceptually: “which fields most likely contain this kind of goal signal?”).
 
 Where field names vary slightly by agency, assume canonical names from OMB’s AI use case inventory guidance such as:
 - `use_case_name`
@@ -23,12 +23,12 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Harmonize objectives across functions to eliminate conflicting priorities and resource dilution.  
 - Translate strategy into actionable, measurable objectives cascaded through the organization.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – language about “mission”, “purpose”, “strategic objectives”, “supporting agency mission”.  
-- `problem_to_be_solved` – statements about misalignment or lack of clarity in direction (where present).  
-- `mission_or_topic_area` – anchor strategic goals in the relevant mission domain.  
-- `business_function_or_program_area` – shows where strategy must translate into objectives.  
-- `use_case_name` – short labels like “Strategic Planning Analytics”, “Mission Alignment Dashboard”.
+**hints**
+- language about “mission”, “purpose”, “strategic objectives”, “supporting agency mission”.  
+- statements about misalignment or lack of clarity in direction (where present).  
+- Mention of anchoring strategic goals in the relevant mission domain.  
+- language about where strategy must translate into objectives.  
+- Short labels like “Strategic Planning Analytics”, “Mission Alignment Dashboard”.
 
 ### 1.2 Strategic fit, market choices, and portfolio moves
 
@@ -37,12 +37,11 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Focus diversification on opportunities that leverage shared customers, capabilities, or platforms.  
 - Continuously anticipate competitive dynamics and substitutes and adjust strategy accordingly.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – text about “market analysis”, “strategy evaluation”, “portfolio optimization”, “expansion planning”.  
-- `problem_to_be_solved` – mentions of “market entry”, “portfolio fit”, “synergy assessment”.  
-- `mission_or_topic_area` – to tag which external markets or policy domains strategy relates to.  
-- `ai_system_outputs` – outputs like “market segmentation”, “scenario analysis”, “portfolio simulations”.  
-- `business_function_or_program_area` – “strategy”, “corporate planning”, “policy analysis”.
+**hints**
+- text about “market analysis”, “strategy evaluation”, “portfolio optimization”, “expansion planning”.  
+- mentions of things like “market entry”, “portfolio fit”, “synergy assessment”.  
+- outputs like “market segmentation”, “scenario analysis”, “portfolio simulations”.  
+- mentions of “strategy”, “corporate planning”, “policy analysis”.
 
 ### 1.3 Business model design and economics
 
@@ -50,11 +49,11 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Align pricing, channels, and partnerships with target customer needs and willingness to pay.  
 - Regularly test and refine business models to maintain economic viability as conditions change.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – phrases like “optimize pricing”, “evaluate business model viability”, “assess revenue/cost structure”.  
-- `problem_to_be_solved` – “unsustainable economics”, “unprofitable segments”, “pricing uncertainty”.  
-- `ai_system_outputs` – “profitability analytics”, “elasticity estimates”, “scenario projections”.  
-- `business_function_or_program_area` – “finance”, “strategy”, “product management”.
+**hints**
+- phrases like “optimize pricing”, “evaluate business model viability”, “assess revenue/cost structure”.  
+- problems to be solved mention “unsustainable economics”, “unprofitable segments”, “pricing uncertainty”.  
+- outputs mention “profitability analytics”, “elasticity estimates”, “scenario projections”.  
+- business function description has “finance”, “strategy”, “product management”.
 
 ### 1.4 Strategic planning and scaling under uncertainty
 
@@ -62,11 +61,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Scale initiatives at a pace that matches organizational capabilities and risk appetite.  
 - Continuously learn from outcomes to refine strategic assumptions and choices.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “scenario planning”, “forecasting under uncertainty”, “capacity planning”, “resource allocation”.  
-- `ai_system_outputs` – “scenario sets”, “risk-adjusted forecasts”, “capacity utilization projections”.  
-- `stage_of_development` – to distinguish planning/experiment vs. scaled deployment.  
-- `mission_or_topic_area` – “enterprise management/strategy”, “internal operations”.
+**hints**
+- purposes and benefits mention things like “scenario planning”, “forecasting under uncertainty”, “capacity planning”, “resource allocation”.  
+- outputs may mention things like “scenario sets”, “risk-adjusted forecasts”, “capacity utilization projections”.   
+- mission or topic area may mention things like “enterprise management/strategy”, “internal operations”.
 
 
 ## 2. Market, Customer, and Revenue Goals
@@ -77,11 +75,11 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Maintain coherent brand identity and experiences across all touchpoints.  
 - Communicate value with concrete proof points that build trust and differentiation.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “improve messaging”, “brand monitoring”, “public sentiment analysis”, “campaign optimization”.  
-- `ai_system_outputs` – “sentiment scores”, “topic clusters”, “messaging insights”.  
-- `mission_or_topic_area` – “communications”, “public affairs”, “outreach”.  
-- `business_function_or_program_area` – “marketing”, “public engagement”.
+**hints**
+- intended purposes or expected benefits may mention something like “improve messaging”, “brand monitoring”, “public sentiment analysis”, “campaign optimization”.  
+- outputs may mention things like “sentiment scores”, “messaging insights”.  
+- mission or topic area may mention things like “communications”, “public affairs”, “outreach”.  
+- business function may involve “marketing”, “public engagement”.
 
 ### 2.2 Market understanding, demand estimation, and segmentation
 
@@ -90,11 +88,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Understand customer jobs‑to‑be‑done and alternatives to inform offerings and messaging.  
 - Use scenario‑based demand forecasting and sensitivity analysis for investment decisions.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “segment customers”, “forecast demand”, “analyze usage patterns”, “identify target groups”.  
-- `ai_system_outputs` – “segment labels”, “demand forecasts”, “propensity scores”.  
-- `mission_or_topic_area` – program/benefit area being forecast.  
-- `business_function_or_program_area` – “policy analysis”, “program design”, “market research”.
+**hints**
+- intended purposes or expected benefits may mention “segment customers”, “forecast demand”, “analyze usage patterns”, “identify target groups”.  
+- outputs may involve “segment labels”, “demand forecasts”, “propensity scores”.   
+- business function may involve “policy analysis”, “program design”, “market research”.
 
 ### 2.3 Customer acquisition, conversion, and go‑to‑market
 
@@ -103,11 +100,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Tailor messaging and journeys by stage to improve conversion.  
 - Optimize customer acquisition cost, payback, and funnel handoffs between teams.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “improve outreach effectiveness”, “target the right beneficiaries/participants”, “optimize campaigns”.  
-- `ai_system_outputs` – “propensity to respond”, “channel attribution”, “campaign performance dashboards”.  
-- `mission_or_topic_area` – domains where outreach or enrollment is key (e.g., health, benefits).  
-- `business_function_or_program_area` – “outreach”, “communications”, “program enrollment”.
+**hints**
+- intended purposes or expected benefits may mention “improve outreach effectiveness”, “target the right beneficiaries/participants”, “optimize campaigns”.  
+- outputs may involve “propensity to respond”, “channel attribution”, “campaign performance dashboards”.  
+- business function may involve “outreach”, “communications”, “program enrollment”.
 
 ### 2.4 Customer experience, satisfaction, and retention
 
@@ -116,11 +112,11 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Use customer data to personalize interactions and improve perceived value.  
 - Systematically collect feedback and act on early churn signals.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “improve customer experience”, “reduce complaints”, “enhance satisfaction”, “increase retention”.  
-- `ai_system_outputs` – “CX scores”, “churn risk scores”, “feedback themes”, “journey analytics”.  
-- `business_function_or_program_area` – “customer service”, “benefits administration”, “contact center”.  
-- `mission_or_topic_area` – specific service areas (e.g., “public-facing services”).
+**hints**
+- intended purposes or expected benefits may mention “improve customer experience”, “reduce complaints”, “enhance satisfaction”, “increase retention”.  
+- outputs may involve “CX scores”, “churn risk scores”, “feedback themes”, “journey analytics”.  
+- business function may involve “customer service”, “benefits administration”, “contact center”.  
+- mission or topic area may involve specific service areas (e.g., “public-facing services”).
 
 
 ## 3. Product, Service, and Innovation Goals
@@ -132,11 +128,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Right‑size feature sets so offerings fully solve priority jobs without overengineering.  
 - Scale go‑to‑market only after achieving robust product–market fit.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “evaluate program effectiveness”, “assess uptake”, “test new offering or policy design”.  
-- `problem_to_be_solved` – “low uptake”, “poor fit”, “misaligned offering”.  
-- `ai_system_outputs` – “uptake prediction”, “usage clustering”, “A/B test analytics”.  
-- `mission_or_topic_area` / `business_function_or_program_area` – where the program/product sits.
+**hints**
+- intended purposes or expected benefits may mention “evaluate program effectiveness”, “assess uptake”, “test new offering or policy design”.  
+- targeted problems may mention “low uptake”, “poor fit”, “misaligned offering”.  
+- outputs may involve “uptake prediction”, “usage clustering”, “A/B test analytics”.  
 
 ### 3.2 Quality, reliability, and consistency
 
@@ -144,30 +139,28 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Consistently deliver on commitments (e.g., timeliness, specifications).  
 - Provide consistent experiences across channels, locations, and time.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “improve service reliability”, “reduce errors”, “monitor quality of service”, “ensure timeliness”.  
-- `ai_system_outputs` – “quality metrics”, “SLAs adherence dashboards”, “anomaly alerts”.  
-- `business_function_or_program_area` – areas with performance targets (e.g., transportation, utilities, benefits processing).  
+**hints**
+- Intended purposes or expected benefits may mention  “improve service reliability”, “reduce errors”, “monitor quality of service”, “ensure timeliness”.  
+- outputs may involve “quality metrics”, “SLAs adherence dashboards”, “anomaly alerts”.  
+- Business functions may involve areas with performance targets (e.g., transportation, utilities, benefits processing).  
 
 ### 3.3 Innovation pace and responsiveness
 
 - Maintain innovation cycles that keep pace with technology, competitors, and customer needs.  
 - Invest in R&D and experimentation aligned with strategic priorities.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “support R&D”, “identify innovation opportunities”, “monitor emerging technologies”.  
-- `ai_system_outputs` – “trend analyses”, “technology scanning results”.  
-- `stage_of_development` – early-stage pilots often associated with innovation goals.
+**hints**
+- Intended purposes or expected benefits may mention  “support R&D”, “identify innovation opportunities”, “monitor emerging technologies”.  
+- outputs may involve “trend analyses”, “technology scanning results”.  
 
 ### 3.4 Product portfolio and lifecycle management
 
 - Actively manage the product portfolio, including timely retirement of legacy offerings.  
 - Allocate resources across offerings based on strategic fit and performance.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “rationalize portfolio”, “prioritize programs”, “support decommission decisions”.  
-- `ai_system_outputs` – “portfolio performance dashboards”, “priority rankings”.  
-- `mission_or_topic_area` / `business_function_or_program_area` – which portfolio (programs, services, assets).  
+**hints**
+- Intended purposes or expected benefits may mention  “rationalize portfolio”, “prioritize programs”, “support decommission decisions”.  
+- outputs may involve “portfolio performance dashboards”, “priority rankings”.  
 
 
 ## 4. Operational and Process Goals
@@ -179,11 +172,11 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Standardize work where appropriate to reduce variability and errors.  
 - Improve process visibility and measurement to support daily management.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “reduce processing time”, “increase throughput”, “streamline workflow”, “reduce rework”.  
-- `problem_to_be_solved` – “backlogs”, “bottlenecks”, “manual effort”.  
-- `ai_system_outputs` – “process metrics”, “queue forecasts”, “bottleneck identification”, “workload predictions”.  
-- `business_function_or_program_area` – “case processing”, “claims”, “licensing”, “back-office operations”.
+**hints**
+- Intended purposes or expected benefits may mention  “reduce processing time”, “increase throughput”, “streamline workflow”, “reduce rework”.  
+- Problems to be solved may mention “backlogs”, “bottlenecks”, “manual effort”.  
+- outputs may involve “process metrics”, “queue forecasts”, “bottleneck identification”, “workload predictions”.  
+- Business functions may involve “case processing”, “claims”, “licensing”, “back-office operations”.
 
 ### 4.2 Supply chain, logistics, inventory, and fulfillment
 
@@ -191,30 +184,27 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Improve logistics reliability and resilience to external shocks.  
 - Optimize inventory levels to balance availability, cost, and risk of obsolescence.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “optimize inventory”, “improve logistics planning”, “reduce stockouts”, “enhance fulfillment”.  
-- `ai_system_outputs` – “demand forecasts”, “routing plans”, “inventory recommendations”, “risk scores on suppliers”.  
-- `mission_or_topic_area` – where physical goods or critical supplies are managed (e.g., emergency management, logistics).  
+**hints**
+- Intended purposes or expected benefits may mention  “optimize inventory”, “improve logistics planning”, “reduce stockouts”, “enhance fulfillment”.  
+- outputs may involve “demand forecasts”, “routing plans”, “inventory recommendations”, “risk scores on suppliers”.  
 
 ### 4.3 Internal controls, procedures, and performance management
 
 - Establish robust internal controls and clear procedures that support compliant, reliable operations.  
 - Use performance metrics and feedback loops to continuously improve processes.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “monitor internal control effectiveness”, “support compliance checks”, “improve accuracy of reporting”.  
-- `ai_system_outputs` – “control exceptions”, “risk alerts”, “performance dashboards”.  
-- `rights_impacting`, `safety_impacting`, `pii_impacted` – to infer stronger control and oversight goals.  
+**hints**
+- Intended purposes or expected benefits may mention  “monitor internal control effectiveness”, “support compliance checks”, “improve accuracy of reporting”.  
+- outputs may involve “control exceptions”, “risk alerts”, “performance dashboards”.  
 
 ### 4.4 Scaling operations without degrading quality or CX
 
 - Scale volumes and complexity while maintaining quality and customer experience.  
 - Invest in systems and capabilities ahead of demand to support growth.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “support scaling of operations”, “handle higher volumes without delay”, “maintain quality at scale”.  
-- `ai_system_outputs` – “capacity forecasts”, “service level projections”, “load balancing recommendations”.  
-- `stage_of_development` – deployed use cases with large volumes highlight scaling goals.  
+**hints**
+- Intended purposes or expected benefits may mention  “support scaling of operations”, “handle higher volumes without delay”, “maintain quality at scale”.  
+- outputs may involve “capacity forecasts”, “service level projections”, “load balancing recommendations”.  
 
 
 ## 5. Financial Structure and Performance Goals
@@ -226,10 +216,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Improve cash‑flow forecasting and maintain adequate buffers and committed credit.  
 - Reduce dependence on fragile short‑term funding.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “forecast revenue”, “monitor cash flow”, “assess financial risk”, “support budgeting”.  
-- `ai_system_outputs` – “cash-flow forecasts”, “revenue projections”, “volatility indicators”.  
-- `business_function_or_program_area` – “finance”, “budget office”, “treasury”.
+**hints**
+- Intended purposes or expected benefits may mention  “forecast revenue”, “monitor cash flow”, “assess financial risk”, “support budgeting”.  
+- outputs may involve “cash-flow forecasts”, “revenue projections”, “volatility indicators”.  
+- Business functions may involve “finance”, “budget office”, “treasury”.
 
 ### 5.2 Cost structure and inflation resilience
 
@@ -237,9 +227,9 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Increase cost flexibility to better absorb inflation and input‑cost shocks.  
 - Enhance cost visibility and control at product, customer, and unit levels.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “analyze cost drivers”, “identify savings opportunities”, “support cost management”.  
-- `ai_system_outputs` – “cost breakdowns”, “trend analytics”, “unit-cost benchmarks”.  
+**hints**
+- Intended purposes or expected benefits may mention  “analyze cost drivers”, “identify savings opportunities”, “support cost management”.  
+- outputs may involve “cost breakdowns”, “trend analytics”, “unit-cost benchmarks”.  
 
 ### 5.3 Profitability, ROI, and capital allocation
 
@@ -248,10 +238,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Evaluate investments with disciplined, risk‑aware methods and consistent hurdle rates.  
 - Conduct post‑investment reviews to learn and redeploy capital effectively.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “evaluate ROI”, “prioritize investments”, “optimize capital allocation”.  
-- `ai_system_outputs` – “ROI estimates”, “project rankings”, “scenario NPVs”.  
-- `business_function_or_program_area` – “investment planning”, “capital projects”.
+**hints**
+- Intended purposes or expected benefits may mention  “evaluate ROI”, “prioritize investments”, “optimize capital allocation”.  
+- outputs may involve “ROI estimates”, “project rankings”, “scenario NPVs”.  
+- Business functions may involve “investment planning”, “capital projects”.
 
 ### 5.4 Leverage, market risk, and financial risk management
 
@@ -259,10 +249,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Manage interest‑rate and refinancing risk proactively.  
 - Systematically hedge or manage currency and other market risks where material.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “assess credit risk”, “monitor exposure to interest rates or FX”, “stress-test financial plans”.  
-- `ai_system_outputs` – “risk scores”, “stress test results”, “exposure reports”.  
-- `business_function_or_program_area` – “risk management”, “treasury”, “financial stability”.
+**hints**
+- Intended purposes or expected benefits may mention  “assess credit risk”, “monitor exposure to interest rates or FX”, “stress-test financial plans”.  
+- outputs may involve “risk scores”, “stress test results”, “exposure reports”.  
+- Business functions may involve “risk management”, “treasury”, “financial stability”.
 
 
 ## 6. Human Capital, Culture, and Organizational Goals
@@ -273,10 +263,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Invest in upskilling, reskilling, and internal mobility to close skills gaps.  
 - Offer competitive, compelling employment value propositions in critical roles.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “forecast workforce needs”, “identify skills gaps”, “optimize staffing”, “support recruitment”.  
-- `ai_system_outputs` – “skill gap analyses”, “workforce forecasts”, “candidate ranking”.  
-- `business_function_or_program_area` – “HR”, “workforce planning”, “training and development”.
+**hints**
+- Intended purposes or expected benefits may mention  “forecast workforce needs”, “identify skills gaps”, “optimize staffing”, “support recruitment”.  
+- outputs may involve “skill gap analyses”, “workforce forecasts”, “candidate ranking”.  
+- Business functions may involve “HR”, “workforce planning”, “training and development”.
 
 ### 6.2 Engagement, culture, and incentives
 
@@ -285,10 +275,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Align incentives with long‑term value, quality, collaboration, and ethics.  
 - Reduce organizational silos and align culture with strategic priorities.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “analyze employee feedback”, “monitor engagement”, “identify cultural issues”, “support DEIA goals”.  
-- `ai_system_outputs` – “engagement scores”, “theme clusters from surveys”, “sentiment analysis of comments”.  
-- `mission_or_topic_area` – “internal operations”, “workforce management”.  
+**hints**
+- Intended purposes or expected benefits may mention  “analyze employee feedback”, “monitor engagement”, “identify cultural issues”, “support DEIA goals”.  
+- outputs may involve “engagement scores”, “theme clusters from surveys”, “sentiment analysis of comments”.  
+- Mission or topic area may mention “internal operations”, “workforce management”.  
 
 ### 6.3 Retention, burnout, and leadership pipelines
 
@@ -297,9 +287,9 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Build robust leadership pipelines and succession plans.  
 - Improve people‑management quality at all levels.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “predict turnover risk”, “identify burnout risk”, “support succession planning”.  
-- `ai_system_outputs` – “attrition predictions”, “risk scores by team or role”, “leadership pipeline analytics”.  
+**hints**
+- Intended purposes or expected benefits may mention  “predict turnover risk”, “identify burnout risk”, “support succession planning”.  
+- outputs may involve “attrition predictions”, “risk scores by team or role”, “leadership pipeline analytics”.  
 
 ### 6.4 Organizational design and decision rights
 
@@ -307,10 +297,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Clarify roles, responsibilities, and handoffs to reduce friction and gaps.  
 - Design clear decision rights and governance that enable timely, accountable decisions.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “map collaboration patterns”, “analyze org structure”, “optimize decision flows”.  
-- `ai_system_outputs` – “network analyses”, “org diagnostics”, “bottleneck maps”.  
-- `business_function_or_program_area` – “organization development”, “change management”.
+**hints**
+- Intended purposes or expected benefits may mention  “map collaboration patterns”, “analyze org structure”, “optimize decision flows”.  
+- outputs may involve “network analyses”, “org diagnostics”, “bottleneck maps”.  
+- Business functions may involve “organization development”, “change management”.
 
 
 ## 7. Governance, Legal, and Compliance Goals
@@ -322,11 +312,11 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Implement robust, well‑resourced compliance functions and controls.  
 - Strengthen monitoring, reporting, and documentation to evidence compliance.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “support regulatory compliance”, “automate compliance checks”, “monitor adherence to policy/law”.  
-- `ai_system_outputs` – “compliance alerts”, “rule‑violation flags”, “monitoring logs”.  
+**hints**
+- Intended purposes or expected benefits may mention  “support regulatory compliance”, “automate compliance checks”, “monitor adherence to policy/law”.  
+- outputs may involve “compliance alerts”, “rule‑violation flags”, “monitoring logs”.  
 - `rights_impacting`, `safety_impacting`, `pii_impacted` – indicate where compliance and legal goals are especially critical.  
-- `business_function_or_program_area` – “compliance”, “legal”, “oversight”.
+- Business functions may involve “compliance”, “legal”, “oversight”.
 
 ### 7.2 Governance structures and board effectiveness
 
@@ -334,10 +324,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Increase board independence, challenge, and accountability.  
 - Improve risk governance and information flow to the board from control functions.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “provide dashboards to leadership/board”, “support enterprise risk management”, “improve oversight”.  
-- `ai_system_outputs` – “enterprise risk dashboards”, “aggregated indicators”, “board reporting packs”.  
-- `mission_or_topic_area` – “enterprise management”, “governance”.
+**hints**
+- Intended purposes or expected benefits may mention  “provide dashboards to leadership/board”, “support enterprise risk management”, “improve oversight”.  
+- outputs may involve “enterprise risk dashboards”, “aggregated indicators”, “board reporting packs”.  
+- Mission or topic area may mention “enterprise management”, “governance”.
 
 ### 7.3 Contract management and intellectual‑property stewardship
 
@@ -346,10 +336,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Protect and enforce intellectual property rights and manage IP disputes strategically.  
 - Draft clear licensing and commercial terms that reduce ambiguity and dispute risk.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “analyze contracts”, “track renewals”, “identify obligations and risks”, “support IP management”.  
-- `ai_system_outputs` – “contract summaries”, “clause classification”, “renewal alerts”, “IP risk flags”.  
-- `business_function_or_program_area` – “procurement”, “legal”, “contracts office”.
+**hints**
+- Intended purposes or expected benefits may mention  “analyze contracts”, “track renewals”, “identify obligations and risks”, “support IP management”.  
+- outputs may involve “contract summaries”, “clause classification”, “renewal alerts”, “IP risk flags”.  
+- Business functions may involve “procurement”, “legal”, “contracts office”.
 
 ### 7.4 Ethics, fraud, and whistleblowing
 
@@ -357,10 +347,9 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Strengthen anti‑fraud controls and oversight in high‑risk areas.  
 - Provide secure, trusted whistleblower channels and robust case management.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “detect fraud”, “monitor ethics violations”, “triage whistleblower reports”.  
-- `ai_system_outputs` – “fraud risk scores”, “anomaly detection outputs”, “case prioritization”.  
-- `rights_impacting` – where ethical and rights implications are most acute.  
+**hints**
+- Intended purposes or expected benefits may mention  “detect fraud”, “monitor ethics violations”, “triage whistleblower reports”.  
+- outputs may involve “fraud risk scores”, “anomaly detection outputs”, “case prioritization”.  
 
 
 ## 8. Technology, Data, and Cybersecurity Goals
@@ -371,29 +360,27 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Modernize legacy systems to improve performance, flexibility, and integration.  
 - Ensure data quality, governance, and accessibility for decision‑making.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “improve data quality”, “support data integration”, “modernize legacy systems”, “enable analytics”.  
-- `ai_system_outputs` – “data quality scores”, “metadata catalogs”, “integration mappings”.  
-- `business_function_or_program_area` – “IT”, “data office”, “CIO function”.
+**hints**
+- Intended purposes or expected benefits may mention  “improve data quality”, “support data integration”, “modernize legacy systems”, “enable analytics”.  
+- outputs may involve “data quality scores”, “metadata catalogs”, “integration mappings”.  
+- Business functions may involve “IT”, “data office”, “CIO function”.
 
 ### 8.2 Cybersecurity and protection
 
 - Strengthen cybersecurity to protect assets, data, and operations.  
 - Detect and respond quickly to threats and vulnerabilities.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “detect cyber threats”, “monitor network activity”, “identify vulnerabilities”.  
-- `ai_system_outputs` – “threat alerts”, “risk scores”, “anomaly flags”.  
-- `pii_impacted`, `rights_impacting`, `safety_impacting` – elevate these cases as security‑critical.  
+**hints**
+- Intended purposes or expected benefits may mention  “detect cyber threats”, “monitor network activity”, “identify vulnerabilities”.  
+- outputs may involve “threat alerts”, “risk scores”, “anomaly flags”.  
 
 ### 8.3 Automation and AI enablement
 
 - Leverage automation and AI in ways that enhance productivity and manage risk.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “automate manual tasks”, “augment analysts”, “support decision-making”.  
-- `ai_system_outputs` – any operational decision support or automation output fields.  
-- `stage_of_development` – to track pilots vs. scaled automation.  
+**hints**
+- Intended purposes or expected benefits may mention  “automate manual tasks”, “augment analysts”, “support decision-making”.  
+- outputs may involve any operational decision support or automation output fields.  
 
 
 ## 9. External Environment and Macroeconomic Goals
@@ -404,10 +391,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Strengthen pricing, cost, and sourcing strategies to handle inflation and input‑cost spikes.  
 - Manage interest‑rate and capital‑access risks to sustain investment capacity.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “monitor macroeconomic indicators”, “assess exposure to downturns”, “support inflation or rate-sensitivity analysis”.  
-- `ai_system_outputs` – “macroeconomic forecasts”, “stress-test simulations”, “exposure reports”.  
-- `mission_or_topic_area` – “economic & financial”, “macroeconomic policy”.
+**hints**
+- Intended purposes or expected benefits may mention  “monitor macroeconomic indicators”, “assess exposure to downturns”, “support inflation or rate-sensitivity analysis”.  
+- outputs may involve “macroeconomic forecasts”, “stress-test simulations”, “exposure reports”.  
+- Mission or topic area may mention “economic & financial”, “macroeconomic policy”.
 
 ### 9.2 Regulatory and policy adaptability
 
@@ -415,10 +402,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Reduce compliance burden through efficient processes while staying within the law.  
 - Protect access to contracts and markets amid policy shifts.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “analyze regulatory changes”, “assess policy impacts”, “support rulemaking analysis”.  
-- `ai_system_outputs` – “policy impact models”, “scenario outcomes”, “change alerts”.  
-- `mission_or_topic_area` – “regulation & policy”, “trade”, “tax”.
+**hints**
+- Intended purposes or expected benefits may mention  “analyze regulatory changes”, “assess policy impacts”, “support rulemaking analysis”.  
+- outputs may involve “policy impact models”, “scenario outcomes”, “change alerts”.  
+- Mission or topic area may mention “regulation & policy”, “trade”, “tax”.
 
 ### 9.3 Resilience to geopolitical, pandemic, and disaster shocks
 
@@ -427,10 +414,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Enhance resilience to natural disasters and climate‑related events.  
 - Secure access to critical energy and resources at sustainable cost.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “assess supply chain risk”, “support disaster response planning”, “monitor geopolitical risk”.  
-- `ai_system_outputs` – “risk maps”, “event likelihood scores”, “resource allocation recommendations”.  
-- `mission_or_topic_area` – “emergency management”, “public health”, “national security”.
+**hints**
+- Intended purposes or expected benefits may mention  “assess supply chain risk”, “support disaster response planning”, “monitor geopolitical risk”.  
+- outputs may involve “risk maps”, “event likelihood scores”, “resource allocation recommendations”.  
+- Mission or topic area may mention “emergency management”, “public health”, “national security”.
 
 ### 9.4 Labor, demographic, and social shifts
 
@@ -438,10 +425,10 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Align skills development with automation and AI trends.  
 - Reduce barriers to workforce participation (e.g., childcare, transport).  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “analyze labor market trends”, “assess demographics”, “support workforce participation initiatives”.  
-- `ai_system_outputs` – “labor market forecasts”, “demographic analyses”.  
-- `mission_or_topic_area` – “labor & workforce”, “education & training”.
+**hints**
+- Intended purposes or expected benefits may mention  “analyze labor market trends”, “assess demographics”, “support workforce participation initiatives”.  
+- outputs may involve “labor market forecasts”, “demographic analyses”.  
+- Mission or topic area may mention “labor & workforce”, “education & training”.
 
 
 ## 10. Reputation, Brand, and Stakeholder Trust Goals
@@ -452,10 +439,9 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Protect personal and sensitive data through strong privacy and security practices.  
 - Prevent safety and environmental incidents across operations and supply chains.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “monitor safety incidents”, “detect product issues”, “improve data protection”.  
-- `ai_system_outputs` – “incident detection alerts”, “safety risk scores”, “privacy/compliance flags”.  
-- `rights_impacting`, `safety_impacting`, `pii_impacted` – automatically highlight use cases where these trust goals are central.
+**hints**
+- Intended purposes or expected benefits may mention  “monitor safety incidents”, “detect product issues”, “improve data protection”.  
+- outputs may involve “incident detection alerts”, “safety risk scores”, “privacy/compliance flags”.  
 
 ### 10.2 Ethical conduct, compliance, and leadership integrity
 
@@ -463,30 +449,29 @@ Where field names vary slightly by agency, assume canonical names from OMB’s A
 - Avoid fraud, manipulation, and misconduct that could erode stakeholder trust.  
 - Ensure leaders embody and reinforce stated values.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “detect misconduct”, “monitor ethics compliance”, “identify conflicts of interest”.  
-- `ai_system_outputs` – “ethics alerts”, “pattern analyses of anomalies”, “case risk scores”.  
-- `rights_impacting` – indicates high-stakes ethical implications.
+**hints**
+- Intended purposes or expected benefits may mention  “detect misconduct”, “monitor ethics compliance”, “identify conflicts of interest”.  
+- outputs may involve “ethics alerts”, “pattern analyses of anomalies”, “case risk scores”.  
 
 ### 10.3 Crisis readiness and communications
 
 - Respond quickly, transparently, and empathetically to crises and incidents.  
 - Coordinate communications to avoid confusion, opacity, or tone‑deaf messaging.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “monitor media/social media”, “support crisis communications”, “detect emerging issues”.  
-- `ai_system_outputs` – “real-time sentiment monitoring”, “incident topic clustering”.  
-- `mission_or_topic_area` – “communications”, “public affairs”.
+**hints**
+- Intended purposes or expected benefits may mention  “monitor media/social media”, “support crisis communications”, “detect emerging issues”.  
+- outputs may involve “real-time sentiment monitoring”, “incident topic clustering”.  
+- Mission or topic area may mention “communications”, “public affairs”.
 
 ### 10.4 Alignment with stakeholder expectations and social impact
 
 - Align actions with stated commitments on sustainability, diversity, and social responsibility.  
 - Demonstrate consistent “say–do” alignment to build long‑term credibility.  
 
-**lookup-fields**
-- `intended_purpose_and_expected_benefits` – “measure ESG performance”, “monitor DEIA outcomes”, “track social impact”.  
-- `ai_system_outputs` – “ESG indicators”, “impact dashboards”, “disparity metrics”.  
+**hints**
+- Intended purposes or expected benefits may mention  “measure ESG performance”, “monitor DEIA outcomes”, “track social impact”.  
+- outputs may involve “ESG indicators”, “impact dashboards”, “disparity metrics”.  
 - `demographics_used` – used carefully to support fairness/equity analyses.  
-- `mission_or_topic_area` – “environment & climate”, “civil rights & equity”, “DEIA”.
+- Mission or topic area may mention “environment & climate”, “civil rights & equity”, “DEIA”.
 
 
